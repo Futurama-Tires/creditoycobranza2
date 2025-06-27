@@ -42,6 +42,11 @@
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
+                        <span>Estados de cuenta</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
                         <span>Ecommerce</span>
                     </a>
                 </li>
