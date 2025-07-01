@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\PagosController;
+use App\Http\Controllers\EstadosDeCuenta\EstadosDeCuentaController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +60,11 @@ Route::middleware('auth')->group(function () {
     Route::get('importar-facturas', [PagosController::class, 'importarFacturas'])->name('importar-facturas');
     Route::post('importar-facturas-usuario', [PagosController::class, 'importarFacturasUsuario'])->name('importar-facturas-usuario');
     Route::get('importar-facturas-usuario-vista', [PagosController::class, 'importarFacturasUsuarioVista'])->name('importar-facturas-usuario-vista');
+
+    //-----------------------------    ESTADOS DE CUENTA    ------------------------------------------------------------------
+    Route::resource('estados_de_cuenta', EstadosDeCuentaController::class)->names('estados_de_cuenta');
+    Route::get('/netsuite/customers', [EstadosDeCuentaController::class, 'getCustomerData']);
+    Route::get('/netsuite/get-client-names', [EstadosDeCuentaController::class, 'getClientNames']);
 
 
 
