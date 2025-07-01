@@ -405,8 +405,8 @@ class PagosController extends Controller
 
     public function importarFacturasUsuario(Request $request)
     {
-
-        set_time_limit(180);
+        set_time_limit(0);
+        ini_set('memory_limit', '512M');
 
         try {
             Log::info('Pre-validation file check:', [
@@ -432,64 +432,52 @@ class PagosController extends Controller
             }
 
             $file = $request->file('facturas');
-
             $rows = SimpleExcelReader::create($file, 'xlsx')
-                ->noHeaderRow()  // <-- agrega esto
+                ->noHeaderRow()
                 ->skip(1)
-                ->getRows();
+                ->getRows()
+                ->collect();
 
+            $toInsert = [];
 
-            $rows = $rows->collect();
+            foreach ($rows as $row) {
+                $nombreFactura = $row[3];
+                $pueOrPpd = $row[13];
 
+                if (!$nombreFactura)
+                    continue;
+
+                $toInsert[] = [
+                    'nombre_factura' => $nombreFactura,
+                    'pue_or_ppd' => $pueOrPpd,
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ];
+            }
 
             DB::beginTransaction();
 
-            $insertedCount = 0;
-            $skippedCount = 0;
-
-
-            // Paso 1: Saca los nombres de factura del Excel
-            $facturaNombres = $rows->pluck(3)->filter()->unique()->toArray();
-
-            // Paso 2: Consulta solo esas facturas
-            $existentes = DB::table('conciliacion_pagos_facturas')
-                ->whereIn('nombre_factura', $facturaNombres)
-                ->select('nombre_factura', 'pue_or_ppd')
-                ->get()
-                ->mapWithKeys(function ($item) {
-                    return [$item->nombre_factura => $item->pue_or_ppd];
-                });
-
-            $rows->each(function ($row, $index) use ($existentes) {
-                try {
-                    $nombreFactura = $row[3];
-                    $pueOrPpd = $row[13];
-
-                    // Si no existe o el valor cambió
-                    if (!isset($existentes[$nombreFactura]) || $existentes[$nombreFactura] !== $pueOrPpd) {
-                        DB::table('conciliacion_pagos_facturas')->updateOrInsert(
-                            ['nombre_factura' => $nombreFactura],
-                            ['pue_or_ppd' => $pueOrPpd]
-                        );
-                    }
-                } catch (\Exception $e) {
-                    Log::error("Error row $index: " . $e->getMessage(), ['row' => $row]);
-                    throw $e;
+            $chunkSize = 1000;
+            foreach (array_chunk($toInsert, $chunkSize) as $chunk) {
+                $values = [];
+                foreach ($chunk as $row) {
+                    $values[] = "('" . addslashes($row['nombre_factura']) . "', '" . addslashes($row['pue_or_ppd']) . "', '" . $row['created_at'] . "', '" . $row['updated_at'] . "')";
                 }
-            });
 
+                $sql = "
+                INSERT INTO conciliacion_pagos_facturas (nombre_factura, pue_or_ppd, created_at, updated_at)
+                VALUES " . implode(',', $values) . "
+                ON DUPLICATE KEY UPDATE
+                    pue_or_ppd = VALUES(pue_or_ppd),
+                    updated_at = VALUES(updated_at)
+            ";
 
-
-
+                DB::statement($sql);
+            }
 
             DB::commit();
 
-            Log::info("Import completed", [
-                'inserted' => $insertedCount,
-                'skipped' => $skippedCount
-            ]);
-
-
+            Log::info("Import completed", ['total_processed' => count($toInsert)]);
             return back()->with('success', 'Los archivos se importaron correctamente.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -497,6 +485,7 @@ class PagosController extends Controller
             return back()->with('error', 'Import failed: ' . $e->getMessage());
         }
     }
+
 
     public function importarFacturasUsuarioVista()
     {
