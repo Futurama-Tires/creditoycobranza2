@@ -42,53 +42,21 @@
                 </div>
             </div>
 
-            <div class="page-body">
-                <div class="container-xl">
-                    <div class="mb-6">
-                        <label class="form-label required">Seleccionar Empleado</label>
-                        <select class="form-select" name="empleado_id" id="empleados" multiple required></select>
-                    </div>
-                </div>
-            </div>
+            <a href="#" class="btn btn-2 ms-auto" data-bs-toggle="modal"
+                                    data-bs-target="#modal-consultar_estado">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-circles-relation">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M9.183 6.117a6 6 0 1 0 4.511 3.986" />
+                                        <path d="M14.813 17.883a6 6 0 1 0 -4.496 -3.954" />
+                                    </svg>
+                                    Agregar Responsiva
+            </a>
         </div>
     </div>
 @endsection
 
-@section('scripts')
-    <script>
-        new TomSelect("#empleados", {
-            placeholder: "Busca y selecciona empleados...",
-            maxItems: 1, // Permite selección múltiple
-            maxOptions: 10, // Máximo número de opciones visibles
-            valueField: "id",
-            labelField: "nombre",
-            searchField: ['nombre', 'paterno', 'materno'],
-            sortField: "nombre",
-            create: false, // No permitir agregar nuevos valores
-            load: function(query, callback) {
-                fetch(`/obtenerEmpleados?q=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(data => callback(data
-                        .data)) // Asegurarse de usar la clave correcta del JSON
-                    .catch(() => callback());
-            },
-            render: {
-                option: function(data, escape) {
-                    return `
-                                    <div>
-                                        <span class="title">${escape(data.nombre)} ${escape(data.paterno)} ${escape(data.materno)}</span>
-                                        <br>
-                                    </div>
-                                `;
-                },
-                item: function(data, escape) {
-                    return `
-                                    <div title="${escape(data.categoria)}">
-                                        ${escape(data.nombre)} ${escape(data.paterno)} ${escape(data.materno)}
-                                    </div>
-                                `;
-                }
-            }
-        });
-    </script>
-@endsection
+
+@include('estados_de_cuenta.cliente_estado_tom')

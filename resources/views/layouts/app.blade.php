@@ -40,6 +40,12 @@
 
     <!-- DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+    <!-- TOM Select CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@1.8.0/dist/css/tom-select.css">
+
+<!-- TOM Select JS -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@1.8.0/dist/js/tom-select.complete.min.js"></script>
+
 
 </head>
 
@@ -112,6 +118,9 @@
             }
         });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@1.8.0/dist/js/tom-select.complete.min.js"></script>
+
 </body>
 
 </html>
