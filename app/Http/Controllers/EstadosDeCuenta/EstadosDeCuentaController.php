@@ -46,6 +46,7 @@ class EstadosDeCuentaController extends Controller
         altname ASC";
 
         $results = $this->querySuiteQL($query);
+        Log::info($results);
         return response()->json($results);
     }
 
@@ -59,18 +60,13 @@ class EstadosDeCuentaController extends Controller
         $datosFacturasPendientes = $this->getFacturasPendientes($customer_id);
         $pagosYNDC = $this->getPagosYNDCPendientes($customer_id);
 
-        /*if ($datosFacturasPendientes && $pagosYNDC) {
-            return view('pagina-con-datos', ['customer' => $customerData])->render();
-        }
-
-        return response()->view('partials.customer-not-found', [], 404);*/
-
-
         dd([$datosFacturasPendientes, $pagosYNDC]);
     }
 
     public function getFacturasPendientes($customer_id)
     {
+        $clientName = "ABEL ZALDIVAR ZORRILLA";
+
         $query = "SELECT 
         BUILTIN.DF(Customer.altname) AS altname,
         BUILTIN.DF(Customer.custentitycodigo_cliente) AS customer_code,
@@ -129,11 +125,12 @@ class EstadosDeCuentaController extends Controller
         Customer.ID =  $customer_id
         ";
 
-        return $this->getResultNetsuiteQuery($query);
+        return $this->querySuiteQL($query);
     }
 
     public function getPagosYNDCPendientes($customer_id)
     {
+        $clientName = "ABEL ZALDIVAR ZORRILLA";
 
         $query = "SELECT
     BUILTIN.DF(Customer.entityid) AS entity_id,
@@ -185,10 +182,10 @@ WHERE
         Customer.ID =  $customer_id
         ";
 
-        return $this->getResultNetsuiteQuery($query);
+        return $this->querySuiteQL($query);
     }
 
-    private function getResultNetsuiteQuery($query)
+    private function querySuiteQL($query)
     {
         $result = $this->netsuite->suiteqlQuery($query);
 
