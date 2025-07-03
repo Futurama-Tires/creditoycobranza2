@@ -45,6 +45,7 @@ class EstadosDeCuentaController extends Controller
     ORDER BY 
         altname ASC";
 
+
         $results = $this->querySuiteQL($query);
         Log::info($results);
         return response()->json($results);
