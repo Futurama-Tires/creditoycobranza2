@@ -240,4 +240,9 @@ WHERE
     {
         //
     }
+
+    public function getFacturasVistaCliente()
+    {
+        return view('estados_de_cuenta\vista-cliente');
+    }
 }

@@ -12,46 +12,49 @@
 
         <!-- Navbar links -->
         <div class="collapse navbar-collapse" id="navbar-menu">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <a href="{{ route('dashboard') }}" class="nav-link">
-                        <span>Inicio</span>
-                    </a>
-                </li>
-                <li class="nav-item dropdown {{ request()->routeIs('clientes.*') ? 'active' : '' }}">
-                    <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
-                        data-bs-auto-close="outside" role="button" aria-expanded="false">
-                        <span class="nav-link-title">Identificación BBVA</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-arrow">
-                        <a class="dropdown-item" href="{{ route('clientes.importar') }}">Regitrar clientes </a>
-                        <a class="dropdown-item" href="{{ route('clientes.procesar') }}">Identificar clientes</a>
-                    </div>
-                </li>
-                <li
-                    class="nav-item dropdown {{ request()->routeIs('conciliacion_pagos.*') || request()->routeIs('importar-facturas-usuario-vista') ? 'active' : '' }}">
-                    <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
-                        data-bs-auto-close="outside" role="button" aria-expanded="false">
-                        <span class="nav-link-title">Conciliación de pagos</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-arrow">
-                        <a class="dropdown-item" href="{{ route('conciliacion_pagos.index') }}">Conciliar </a>
-                        <a class="dropdown-item" href="{{ route('importar-facturas-usuario-vista') }}">Importar
-                            facturas</a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <span>Estados de cuenta</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <span>Ecommerce</span>
-                    </a>
-                </li>
-            </ul>
-
+            @auth
+                @if (auth()->user()->tipo === 'empleado')
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('dashboard') }}" class="nav-link">
+                                <span>Inicio</span>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown {{ request()->routeIs('clientes.*') ? 'active' : '' }}">
+                            <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
+                                data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                <span class="nav-link-title">Identificación BBVA</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-arrow">
+                                <a class="dropdown-item" href="{{ route('clientes.importar') }}">Regitrar clientes </a>
+                                <a class="dropdown-item" href="{{ route('clientes.procesar') }}">Identificar clientes</a>
+                            </div>
+                        </li>
+                        <li
+                            class="nav-item dropdown {{ request()->routeIs('conciliacion_pagos.*') || request()->routeIs('importar-facturas-usuario-vista') ? 'active' : '' }}">
+                            <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
+                                data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                <span class="nav-link-title">Conciliación de pagos</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-arrow">
+                                <a class="dropdown-item" href="{{ route('conciliacion_pagos.index') }}">Conciliar </a>
+                                <a class="dropdown-item" href="{{ route('importar-facturas-usuario-vista') }}">Importar
+                                    facturas</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <span>Estados de cuenta</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <span>Ecommerce</span>
+                            </a>
+                        </li>
+                    </ul>
+                @endif
+            @endauth
 
 
             <div class="nav-item dropdown">
