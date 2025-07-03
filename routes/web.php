@@ -63,8 +63,7 @@ Route::middleware('auth')->group(function () {
 
     //-----------------------------    ESTADOS DE CUENTA    ------------------------------------------------------------------
     Route::resource('estados_de_cuenta', EstadosDeCuentaController::class)->names('estados_de_cuenta');
-    Route::get('/netsuite/customers', [EstadosDeCuentaController::class, 'getCustomerData']);
-    Route::get('/netsuite/get-client-names', [EstadosDeCuentaController::class, 'getClientNames']);
+    Route::get('/netsuite/get-fac-pag-ndc', [EstadosDeCuentaController::class, 'getFacturasPagosNDC']);
 
 
 

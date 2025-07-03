@@ -20,106 +20,27 @@ class EstadosDeCuentaController extends Controller
         $this->netsuite = $netsuite;
     }
 
-    public function getCustomerData()
-    {
-        //$dataset = 'custdataset59'; // Tu dataset específico
-        //$dataset = 'custdataset65'; // Tu dataset específico DA LOS POSITIVOS
-        $dataset = 'custdataset66'; // Tu dataset específico DA LOS NEGATIVOS
-        $data = $this->netsuite->queryDataset($dataset);
-
-        $altname = "ZUNYEN REYES NAVARRETE"; // El altname que deseas filtrar
-
-        // Filter the items by entityid:
-        // $filteredItems = collect($data['items'])->filter(function ($item) use ($entityId) {
-        //     // Trim quotes if needed:
-        //     return trim($item['entityid'], '"') === $entityId;
-        // })->values();
-
-        // return response()->json([
-        //     'count' => $filteredItems->count(),
-        //     'items' => $filteredItems,
-        // ]);
-
-        //Filter the items by entityid:
-
-        // $filteredItems = collect($data['items'])->filter(function ($item) use ($altname) {
-        //     // Trim quotes if needed:
-        //     return trim($item['altname'], '"') === $altname;
-        // })->values();
-
-        $coleccion_clientes = collect($data['items']);
-
-
-        $resultado = $coleccion_clientes->filter(function ($item) use ($altname) {
-            // Use stripos() for case-insensitive contains
-            return stripos($item['altname'], $altname) !== false;
-        })->values();
-        // return response()->json([
-        //     'count' => $filteredItems->count(),
-        //     'items' => $filteredItems,
-        // ]);
-
-
-        return response()->json($resultado);
-    }
-
     public function index()
     {
-
-
         return view('estados_de_cuenta.index');
     }
-
-    // public function getClientNames(Request $request)
-    // {
-    //     $dataset = 'custdataset67';
-    //     $query = $request->input('query', '');
-
-    //     $limit = 1000;
-    //     $offset = 0;
-    //     $allItems = [];
-
-    //     do {
-    //         $data = $this->netsuite->queryDataset($dataset, $limit, $offset);
-
-    //         if (empty($data) || empty($data['items'])) {
-    //             Log::info("No more data or empty result at offset {$offset}");
-    //             break;
-    //         }
-
-    //         Log::info("Fetched " . count($data['items']) . " items at offset {$offset}");
-
-    //         $items = $data['items'];
-    //         $allItems = array_merge($allItems, $items);
-
-    //         $offset += $limit;
-    //     } while (count($items) === $limit);
-
-    //     Log::info("Total items fetched: " . count($allItems));
-
-    //     $filtered = collect($allItems)->filter(function ($item) use ($query) {
-    //         $name = $item['altname'] ?? '';
-    //         Log::info("Checking name: {$name} against query: {$query}");
-    //         return stripos($name, $query) !== false;
-    //     })->pluck('altname');
-
-    //     Log::info("Filtered results count: " . $filtered->count());
-
-    //     return $filtered->values();
-    // }
-
-
-
-
 
 
     /**
      * Show the form for creating a new resource.
      */
 
-    public function getClientNames()
+    public function getFacturasPagosNDC()
     {
-        $clientName = "A & M REFACCIONES Y SERVICIOS AUTOMOTRICES";
+        $datosFacturasPendientes = $this->getFacturasPendientes();
+        $pagosYNDC = $this->getPagosYNDCPendientes();
+
+        dd([$datosFacturasPendientes,$pagosYNDC]);
+    }
+
+    public function getFacturasPendientes()
+    {
+        $clientName = "ABEL ZALDIVAR ZORRILLA";
         set_time_limit(180);
         $query = "SELECT 
         BUILTIN.DF(Customer.altname) AS altname,
@@ -181,8 +102,69 @@ class EstadosDeCuentaController extends Controller
 
         $result = $this->netsuite->suiteqlQuery($query);
 
-        dd($result);
+        return $result;
     }
+
+    public function getPagosYNDCPendientes()
+    {
+        $clientName = "ABEL ZALDIVAR ZORRILLA";
+        set_time_limit(180);
+        $query = "SELECT
+    BUILTIN.DF(Customer.entityid) AS entity_id,
+    BUILTIN.DF(Customer.altname) AS alt_name,
+    BUILTIN.DF(Customer.custentitycodigo_cliente) AS customer_code,
+    BUILTIN.DF(Customer.custentity_rfc) AS rfc,
+    BUILTIN.DF(transaction_SUB.fullname) AS status,
+    BUILTIN.DF(transaction_SUB.trandate) AS transaction_date,
+    BUILTIN.DF(transaction_SUB.typebaseddocumentnumber) AS document_number,
+    BUILTIN.DF(transaction_SUB.custbody_foliosat) AS folio_sat,
+    BUILTIN.DF(transaction_SUB.lastname) AS employee_lastname,
+    BUILTIN.DF(transaction_SUB.firstname) AS employee_firstname,
+    BUILTIN.DF(transaction_SUB.duedate) AS due_date,
+    transaction_SUB.foreigntotal AS total_amount,
+    transaction_SUB.foreignpaymentamountunused AS payment_amount_unused,
+    transaction_SUB.foreignamountunpaid AS amount_unpaid
+FROM
+    Customer
+LEFT JOIN (
+    SELECT
+        t.entity,
+        ts.fullname,
+        t.trandate,
+        t.typebaseddocumentnumber,
+        t.custbody_foliosat,
+        e.lastname,
+        e.firstname,
+        t.duedate,
+        t.foreigntotal,
+        t.foreignpaymentamountunused,
+        t.foreignamountunpaid,
+        t.TYPE AS transaction_type,
+        t.foreignpaymentamountunused AS unused_payment_criteria
+    FROM
+        transaction t
+    LEFT JOIN employee e ON t.employee = e.ID
+    LEFT JOIN TransactionStatus ts ON
+        t.TYPE = ts.trantype AND
+        t.status = ts.ID AND
+        t.customtype = ts.trancustomtype
+) transaction_SUB ON Customer.ID = transaction_SUB.entity
+LEFT JOIN employee employee_0 ON Customer.salesrep = employee_0.ID
+WHERE
+    employee_0.subsidiary IN ('3') AND
+    Customer.altname IS NOT NULL AND
+    transaction_SUB.transaction_type IN ('CustCred', 'CustPymt') AND
+    transaction_SUB.unused_payment_criteria > 0
+       AND
+        Customer.altname LIKE '" . '%' . addslashes($clientName) . '%' . "'
+        ";
+
+        $result = $this->netsuite->suiteqlQuery($query);
+
+        return $result;
+    }
+
+
     public function create()
     {
         //
