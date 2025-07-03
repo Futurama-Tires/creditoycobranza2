@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\NetsuiteService;
 use Illuminate\Support\Facades\Log;
-
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 class EstadosDeCuentaController extends Controller
 {
@@ -25,23 +25,52 @@ class EstadosDeCuentaController extends Controller
         return view('estados_de_cuenta.index');
     }
 
+    public function getCustomers(Request $request)
+    {
+
+        $customerName = strtoupper($request->input('query'));
+
+        $query = "SELECT DISTINCT
+    BUILTIN.DF(Customer.altname) AS altname,
+    Customer.ID AS customer_id
+    FROM 
+        Customer
+    LEFT JOIN employee ON Customer.salesrep = employee.ID
+    WHERE 
+        employee.subsidiary IN ('3') AND 
+        Customer.altname IS NOT NULL AND 
+        Customer.custentitycodigo_cliente IS NOT NULL AND 
+        Customer.custentity_rfc IS NOT NULL AND
+        Customer.altname LIKE '" . '%' . addslashes($customerName) . '%' . "'
+    ORDER BY 
+        altname ASC";
+
+        $results = $this->querySuiteQL($query);
+        return response()->json($results);
+    }
 
     /**
      * Show the form for creating a new resource.
      */
 
-    public function getFacturasPagosNDC()
+    public function getFacturasPagosNDC(Request $request)
     {
-        $datosFacturasPendientes = $this->getFacturasPendientes();
-        $pagosYNDC = $this->getPagosYNDCPendientes();
+        $customer_id = $request->input('customer_id');
+        $datosFacturasPendientes = $this->getFacturasPendientes($customer_id);
+        $pagosYNDC = $this->getPagosYNDCPendientes($customer_id);
+
+        /*if ($datosFacturasPendientes && $pagosYNDC) {
+            return view('pagina-con-datos', ['customer' => $customerData])->render();
+        }
+
+        return response()->view('partials.customer-not-found', [], 404);*/
+
 
         dd([$datosFacturasPendientes, $pagosYNDC]);
     }
 
-    public function getFacturasPendientes()
+    public function getFacturasPendientes($customer_id)
     {
-        $clientName = "ABEL ZALDIVAR ZORRILLA";
-        set_time_limit(180);
         $query = "SELECT 
         BUILTIN.DF(Customer.altname) AS altname,
         BUILTIN.DF(Customer.custentitycodigo_cliente) AS customer_code,
@@ -97,18 +126,15 @@ class EstadosDeCuentaController extends Controller
         Customer.custentitycodigo_cliente IS NOT NULL AND 
         Customer.custentity_rfc IS NOT NULL AND
         transaction_SUB.foreignamountunpaid > 0 AND
-        Customer.altname LIKE '" . '%' . addslashes($clientName) . '%' . "'
+        Customer.ID =  $customer_id
         ";
 
-        $result = $this->netsuite->suiteqlQuery($query);
-
-        return $result;
+        return $this->getResultNetsuiteQuery($query);
     }
 
-    public function getPagosYNDCPendientes()
+    public function getPagosYNDCPendientes($customer_id)
     {
-        $clientName = "ABEL ZALDIVAR ZORRILLA";
-        set_time_limit(180);
+
         $query = "SELECT
     BUILTIN.DF(Customer.entityid) AS entity_id,
     BUILTIN.DF(Customer.altname) AS alt_name,
@@ -156,13 +182,20 @@ WHERE
     transaction_SUB.transaction_type IN ('CustCred', 'CustPymt') AND
     transaction_SUB.unused_payment_criteria > 0
        AND
-        Customer.altname LIKE '" . '%' . addslashes($clientName) . '%' . "'
+        Customer.ID =  $customer_id
         ";
 
+        return $this->getResultNetsuiteQuery($query);
+    }
+
+    private function getResultNetsuiteQuery($query)
+    {
         $result = $this->netsuite->suiteqlQuery($query);
 
         return $result;
     }
+
+
 
 
     public function create()

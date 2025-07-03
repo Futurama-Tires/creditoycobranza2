@@ -25,6 +25,13 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Reddit+Sans:ital,wght@0,200..900;1,200..900&display=swap"
         rel="stylesheet">
+
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+
+    {{-- Tom Select CSS --}}
+    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+
     <style>
         body {
             font-family: "Reddit Sans", serif;
@@ -36,17 +43,6 @@
             font-family: 'Poppins', sans-serif;
         }
     </style>
-
-
-    <!-- DataTables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
-    <!-- TOM Select CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@1.8.0/dist/css/tom-select.css">
-
-<!-- TOM Select JS -->
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@1.8.0/dist/js/tom-select.complete.min.js"></script>
-
-
 </head>
 
 <body>
@@ -84,6 +80,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/libs/dropzone/dist/dropzone-min.js"></script>
     <!-- JS SweetAlert 2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- Tom Select JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 
     @yield('scripts')
 
@@ -118,8 +116,6 @@
             }
         });
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@1.8.0/dist/js/tom-select.complete.min.js"></script>
 
 </body>
 
