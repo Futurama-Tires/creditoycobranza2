@@ -35,7 +35,7 @@ class EstadosDeCuentaController extends Controller
         $datosFacturasPendientes = $this->getFacturasPendientes();
         $pagosYNDC = $this->getPagosYNDCPendientes();
 
-        dd([$datosFacturasPendientes,$pagosYNDC]);
+        dd([$datosFacturasPendientes, $pagosYNDC]);
     }
 
     public function getFacturasPendientes()
@@ -208,5 +208,10 @@ WHERE
     public function destroy(string $id)
     {
         //
+    }
+
+    public function getFacturasVistaCliente()
+    {
+        return view('estados_de_cuenta\vista-cliente');
     }
 }

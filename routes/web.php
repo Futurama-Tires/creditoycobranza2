@@ -21,24 +21,37 @@ use App\Http\Controllers\EstadosDeCuenta\EstadosDeCuentaController;
 */
 
 Route::get('/', function () {
+
     return view('auth.login');
 });
 
 Route::get('/dashboard', function () {
-    //Obtener saludo dependiendo el día
-    $hour = now()->hour;
-    $greeting = match (true) {
-        $hour < 12 => '¡Buenos días',
-        $hour < 18 => '¡Buenas tardes',
-        default => '¡Buenas noches',
-    };
+
+    $user = auth()->user();
 
 
-    return view('dashboard', compact('greeting'));
+
+    if ($user->tipo == "cliente") {
+        //dd([$user->tipo, " en if"]);
+
+        return redirect()->route('fac-vista-cliente');
+    } else {
+        //dd([$user->tipo, " en else"]);
+        //Obtener saludo dependiendo el día
+        $hour = now()->hour;
+        $greeting = match (true) {
+            $hour < 12 => '¡Buenos días',
+            $hour < 18 => '¡Buenas tardes',
+            default => '¡Buenas noches',
+        };
+
+
+        return view('dashboard', compact('greeting'));
+    }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'empleado'])->group(function () {
 
     Route::get('/prueba', function () {
         return view('pages.prueba');
@@ -71,5 +84,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/netsuite/get-fac-vista-cliente', [EstadosDeCuentaController::class, 'getFacturasVistaCliente'])
+    ->middleware(['auth', 'verified'])
+    ->name('fac-vista-cliente');
 
 require __DIR__ . '/auth.php';
