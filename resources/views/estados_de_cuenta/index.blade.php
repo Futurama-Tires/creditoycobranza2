@@ -73,7 +73,7 @@
                     <div class="row row-deck row-cards">
 
                         {{-- RESUMEN GENERAL --}}
-                        <div class="col-sm-12 col-lg-6">
+                        <div class="col-md-12 col-lg-6">
                             <div class="row row-deck row-cards">
                                 <div class="col-sm-6 col-lg-12">
                                     <div class="card">
@@ -299,127 +299,122 @@
                                     </tbody>
                                 </table>
                             </div>
-
-
                         </div>
-
-
 
                         {{-- TABLA FACTURAS Y SALDOS A FAVOR --}}
- <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Saldos pendientes</h3>
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Saldos pendientes</h3>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-selectable card-table table-vcenter table-nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha de transacción</th>
+                                                <th>Tipo de transacción</th>
+                                                <th>No. Documento</th>
+                                                <th>Folio SAT</th>
+                                                <th>Fecha de vencimiento</th>
+                                                <th>Días vencidos</th>
+                                                <th>Importe total</th>
+                                                <th>Saldo pendiente</th>
+                                                <th>Moneda</th>
+                                                <th>Estatus</th>
+                                                <th>Nota de factura</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>25/06/2025</td>
+
+                                                <td><span class="text-secondary">FACTURA</span></td>
+
+                                                <td><a href="invoice.html" class="text-reset"
+                                                        tabindex="-1">FAC-IXT78944</a>
+                                                </td>
+
+                                                <td>694780</td>
+
+                                                <td>25/06/2025</td>
+
+                                                <td>2</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>
+                                                    <span class="flag flag-xs flag-country-mx me-2"></span>
+                                                    MEX
+                                                </td>
+                                                <td><span class="badge bg-success me-1"></span>Factura abierta</td>
+                                                <td>
+                                                    PONIENTE
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>25/06/2025</td>
+
+                                                <td><span class="text-secondary">FACTURA</span></td>
+
+                                                <td><a href="invoice.html" class="text-reset"
+                                                        tabindex="-1">FAC-IXT78944</a>
+                                                </td>
+
+                                                <td>694780</td>
+
+                                                <td>25/06/2025</td>
+
+                                                <td>2</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>
+                                                    <span class="flag flag-xs flag-country-mx me-2"></span>
+                                                    MEX
+                                                </td>
+                                                <td><span class="badge bg-success me-1"></span>Factura abierta</td>
+                                                <td>
+                                                    PONIENTE
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>25/06/2025</td>
+
+                                                <td><span class="text-secondary">FACTURA</span></td>
+
+                                                <td><a href="invoice.html" class="text-reset"
+                                                        tabindex="-1">FAC-IXT78944</a>
+                                                </td>
+
+                                                <td>694780</td>
+
+                                                <td>25/06/2025</td>
+
+                                                <td>2</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>
+                                                    <span class="flag flag-xs flag-country-mx me-2"></span>
+                                                    MEX
+                                                </td>
+                                                <td><span class="badge bg-success me-1"></span>Factura abierta</td>
+                                                <td>
+                                                    PONIENTE
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-selectable card-table table-vcenter ">
-                                    <thead>
-                                        <tr>
-                                            <th>Fecha de transacción</th>
-                                            <th>Tipo de transacción</th>
-                                            <th>No. Documento</th>
-                                            <th>Folio SAT</th>
-                                            <th>Fecha de vencimiento</th>
-                                            <th>Días vencidos</th>
-                                            <th>Importe total</th>
-                                            <th>Saldo pendiente</th>
-                                            <th>Moneda</th>
-                                            <th>Estatus</th>
-                                            <th>Nota de factura</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>25/06/2025</td>
-
-                                            <td><span class="text-secondary">FACTURA</span></td>
-
-                                            <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
-                                            </td>
-
-                                            <td>694780</td>
-
-                                            <td>25/06/2025</td>
-
-                                            <td>2</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>
-                                                <span class="flag flag-xs flag-country-mx me-2"></span>
-                                                MEX
-                                            </td>
-                                            <td><span class="badge bg-success me-1"></span>Factura abierta</td>
-                                            <td>
-                                                PONIENTE
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>25/06/2025</td>
-
-                                            <td><span class="text-secondary">FACTURA</span></td>
-
-                                            <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
-                                            </td>
-
-                                            <td>694780</td>
-
-                                            <td>25/06/2025</td>
-
-                                            <td>2</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>
-                                                <span class="flag flag-xs flag-country-mx me-2"></span>
-                                                MEX
-                                            </td>
-                                            <td><span class="badge bg-success me-1"></span>Factura abierta</td>
-                                            <td>
-                                                PONIENTE
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>25/06/2025</td>
-
-                                            <td><span class="text-secondary">FACTURA</span></td>
-
-                                            <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
-                                            </td>
-
-                                            <td>694780</td>
-
-                                            <td>25/06/2025</td>
-
-                                            <td>2</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>
-                                                <span class="flag flag-xs flag-country-mx me-2"></span>
-                                                MEX
-                                            </td>
-                                            <td><span class="badge bg-success me-1"></span>Factura abierta</td>
-                                            <td>
-                                                PONIENTE
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-
-
-
                         </div>
-                    </div>
 
                         {{-- TABLA SALDOS A FAVOR --}}
                         <div class="col-lg-12">
@@ -602,6 +597,7 @@
             },
         });
     </script>
+
 
 
 @endsection
