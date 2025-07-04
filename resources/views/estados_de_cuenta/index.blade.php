@@ -51,9 +51,8 @@
                                             <span class="input-icon-addon">
                                                 <!-- Download SVG icon from http://tabler.io/icons/icon/search -->
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-1">
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
                                                     <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
                                                     <path d="M21 21l-6 -6"></path>
                                                 </svg>
@@ -306,120 +305,120 @@
 
 
                         {{-- TABLA FACTURAS Y SALDOS A FAVOR --}}
- <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Saldos pendientes</h3>
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Saldos pendientes</h3>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-selectable card-table table-vcenter ">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha de transacción</th>
+                                                <th>Tipo de transacción</th>
+                                                <th>No. Documento</th>
+                                                <th>Folio SAT</th>
+                                                <th>Fecha de vencimiento</th>
+                                                <th>Días vencidos</th>
+                                                <th>Importe total</th>
+                                                <th>Saldo pendiente</th>
+                                                <th>Moneda</th>
+                                                <th>Estatus</th>
+                                                <th>Nota de factura</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>25/06/2025</td>
+
+                                                <td><span class="text-secondary">FACTURA</span></td>
+
+                                                <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
+                                                </td>
+
+                                                <td>694780</td>
+
+                                                <td>25/06/2025</td>
+
+                                                <td>2</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>
+                                                    <span class="flag flag-xs flag-country-mx me-2"></span>
+                                                    MEX
+                                                </td>
+                                                <td><span class="badge bg-success me-1"></span>Factura abierta</td>
+                                                <td>
+                                                    PONIENTE
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>25/06/2025</td>
+
+                                                <td><span class="text-secondary">FACTURA</span></td>
+
+                                                <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
+                                                </td>
+
+                                                <td>694780</td>
+
+                                                <td>25/06/2025</td>
+
+                                                <td>2</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>
+                                                    <span class="flag flag-xs flag-country-mx me-2"></span>
+                                                    MEX
+                                                </td>
+                                                <td><span class="badge bg-success me-1"></span>Factura abierta</td>
+                                                <td>
+                                                    PONIENTE
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>25/06/2025</td>
+
+                                                <td><span class="text-secondary">FACTURA</span></td>
+
+                                                <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
+                                                </td>
+
+                                                <td>694780</td>
+
+                                                <td>25/06/2025</td>
+
+                                                <td>2</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>$4,923.72</td>
+
+                                                <td>
+                                                    <span class="flag flag-xs flag-country-mx me-2"></span>
+                                                    MEX
+                                                </td>
+                                                <td><span class="badge bg-success me-1"></span>Factura abierta</td>
+                                                <td>
+                                                    PONIENTE
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
+
+
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-selectable card-table table-vcenter ">
-                                    <thead>
-                                        <tr>
-                                            <th>Fecha de transacción</th>
-                                            <th>Tipo de transacción</th>
-                                            <th>No. Documento</th>
-                                            <th>Folio SAT</th>
-                                            <th>Fecha de vencimiento</th>
-                                            <th>Días vencidos</th>
-                                            <th>Importe total</th>
-                                            <th>Saldo pendiente</th>
-                                            <th>Moneda</th>
-                                            <th>Estatus</th>
-                                            <th>Nota de factura</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>25/06/2025</td>
-
-                                            <td><span class="text-secondary">FACTURA</span></td>
-
-                                            <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
-                                            </td>
-
-                                            <td>694780</td>
-
-                                            <td>25/06/2025</td>
-
-                                            <td>2</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>
-                                                <span class="flag flag-xs flag-country-mx me-2"></span>
-                                                MEX
-                                            </td>
-                                            <td><span class="badge bg-success me-1"></span>Factura abierta</td>
-                                            <td>
-                                                PONIENTE
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>25/06/2025</td>
-
-                                            <td><span class="text-secondary">FACTURA</span></td>
-
-                                            <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
-                                            </td>
-
-                                            <td>694780</td>
-
-                                            <td>25/06/2025</td>
-
-                                            <td>2</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>
-                                                <span class="flag flag-xs flag-country-mx me-2"></span>
-                                                MEX
-                                            </td>
-                                            <td><span class="badge bg-success me-1"></span>Factura abierta</td>
-                                            <td>
-                                                PONIENTE
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>25/06/2025</td>
-
-                                            <td><span class="text-secondary">FACTURA</span></td>
-
-                                            <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
-                                            </td>
-
-                                            <td>694780</td>
-
-                                            <td>25/06/2025</td>
-
-                                            <td>2</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>$4,923.72</td>
-
-                                            <td>
-                                                <span class="flag flag-xs flag-country-mx me-2"></span>
-                                                MEX
-                                            </td>
-                                            <td><span class="badge bg-success me-1"></span>Factura abierta</td>
-                                            <td>
-                                                PONIENTE
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-
-
-
                         </div>
-                    </div>
 
                         {{-- TABLA SALDOS A FAVOR --}}
                         <div class="col-lg-12">
@@ -451,8 +450,8 @@
 
                                                 <td><span class="text-secondary">FACTURA</span></td>
 
-                                                <td><a href="invoice.html" class="text-reset"
-                                                        tabindex="-1">FAC-IXT78944</a></td>
+                                                <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
+                                                </td>
 
                                                 <td>694780</td>
 
@@ -478,8 +477,8 @@
 
                                                 <td><span class="text-secondary">FACTURA</span></td>
 
-                                                <td><a href="invoice.html" class="text-reset"
-                                                        tabindex="-1">FAC-IXT78944</a></td>
+                                                <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
+                                                </td>
 
                                                 <td>694780</td>
 
@@ -505,8 +504,8 @@
 
                                                 <td><span class="text-secondary">FACTURA</span></td>
 
-                                                <td><a href="invoice.html" class="text-reset"
-                                                        tabindex="-1">FAC-IXT78944</a></td>
+                                                <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
+                                                </td>
 
                                                 <td>694780</td>
 
@@ -544,6 +543,63 @@
 @endsection
 
 @section('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            new TomSelect("#select-beast-empty", {
+                placeholder: "Selecciona un cliente",
+                maxItems: 1,
+                allowEmptyOption: true,
+                create: false,
+                dropdownParent: 'body',
+                valueField: 'customer_id', // Usar el ID como valor
+                labelField: 'altname', // Usar altname para mostrar
+                searchField: 'altname', // Buscar por altname
+                load: function (query, callback) {
+                    $.ajax({
+                        url: "/netsuite/get-customers",
+                        data: {
+                            query: query
+                        },
+                        success: function (response) {
+                            console.log('Data received:', response);
+
+                            // Verificar si la respuesta tiene la estructura esperada
+                            if (response.items && Array.isArray(response.items)) {
+                                // Mapear los items al formato que TomSelect espera
+                                const formattedData = response.items.map(item => ({
+                                    customer_id: item.customer_id,
+                                    altname: item.altname
+                                }));
+
+                                console.log('Formatted data:', formattedData);
+                                callback(formattedData);
+                            } else {
+                                console.error('Unexpected response structure');
+                                callback([]);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error:', error);
+                            callback([]);
+                        }
+                    });
+                },
+                render: {
+                    option: function (item, escape) {
+                        return '<div>' + escape(item.altname) + '</div>';
+                    },
+                    item: function (item, escape) {
+                        return '<div>' + escape(item.altname) + '</div>';
+                    }
+                },
+                maxOptions: 100,
+
+                onInitialize: function () {
+                    console.log('TomSelect Initialized');
+                }
+            });
+        });
+    </script>
     {{-- Saldos Vencidos --}}
     <script>
         const ctx = document.getElementById('saldosVencidos');
