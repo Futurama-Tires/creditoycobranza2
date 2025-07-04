@@ -67,6 +67,7 @@ class EstadosDeCuentaController extends Controller
     public function getFacturasPendientes($customer_id)
     {
 
+
         $query = "SELECT 
         BUILTIN.DF(Customer.altname) AS altname,
         BUILTIN.DF(Customer.custentitycodigo_cliente) AS customer_code,
