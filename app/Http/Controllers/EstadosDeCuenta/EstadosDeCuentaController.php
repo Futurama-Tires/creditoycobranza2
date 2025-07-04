@@ -66,7 +66,6 @@ class EstadosDeCuentaController extends Controller
 
     public function getFacturasPendientes($customer_id)
     {
-        $clientName = "ABEL ZALDIVAR ZORRILLA";
 
         $query = "SELECT 
         BUILTIN.DF(Customer.altname) AS altname,
@@ -131,7 +130,6 @@ class EstadosDeCuentaController extends Controller
 
     public function getPagosYNDCPendientes($customer_id)
     {
-        $clientName = "ABEL ZALDIVAR ZORRILLA";
 
         $query = "SELECT
     BUILTIN.DF(Customer.entityid) AS entity_id,
