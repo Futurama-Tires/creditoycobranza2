@@ -16,8 +16,6 @@
     <!-- DropZone -->
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/libs/dropzone/dist/dropzone.css"
         rel="stylesheet" />
-    {{-- CSS --}}
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,13 +43,20 @@
             font-family: 'Poppins', sans-serif;
         }
     </style>
+
+    {{-- Livewire --}}
+    @livewireStyles
 </head>
 
 <body>
+    {{ $slot ?? '' }}
+    @livewireScripts
+
     @include('layouts.navigation')
 
 
-    <div id="loader" style="
+    <div id="loader"
+        style="
         position: fixed;
         z-index: 9999;
         top: 0;
@@ -78,8 +83,7 @@
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
     <!-- DropZone -->
-    <script
-        src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/libs/dropzone/dist/dropzone-min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/libs/dropzone/dist/dropzone-min.js"></script>
     <!-- JS SweetAlert 2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- Tom Select JS --}}
@@ -87,6 +91,7 @@
 
     {{-- Chart Js --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
     @yield('scripts')
 
@@ -114,7 +119,7 @@
 
     <script>
         // Hide loader when everything has loaded
-        window.addEventListener('load', function () {
+        window.addEventListener('load', function() {
             const loader = document.getElementById('loader');
             if (loader) {
                 loader.style.display = 'none';
