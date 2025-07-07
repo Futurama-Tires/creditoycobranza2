@@ -52,10 +52,13 @@
                                                     <div class="mt-auto">
                                                         <div class="progress progress-separated mb-3">
                                                             <div class="progress-bar bg-primary" role="progressbar"
-                                                                style="width: {{$porcentajes[0]['no_vencido']}}%"
+                                                                style="width: 0%"
+                                                                data-width="{{ $porcentajes[0]['no_vencido'] }}"
                                                                 aria-label="No Vencido"></div>
+
                                                             <div class="progress-bar bg-danger" role="progressbar"
-                                                                style="width: {{ $porcentajes[0]['vencido'] }}%"
+                                                                style="width: 0%"
+                                                                data-width="{{ $porcentajes[0]['vencido'] }}"
                                                                 aria-label="Vencidas"></div>
                                                         </div>
                                                         <div class="row">
@@ -87,7 +90,9 @@
                                         <div class="card-body">
                                             <div class="subheader">Total Saldos Vencidos</div>
                                             <div class="d-flex align-items-baseline mb-2">
-                                                <div class="h1 mb-0 me-2">{{$saldosVencidos['totalVencidas']}}</div>
+                                                <div class="h1 mb-0 me-2">
+                                                    {{'$' . number_format($saldos['totalVencidas'], 2, '.', ',')}}
+                                                </div>
                                                 <div class="me-auto">
                                                     <span class="text-red d-inline-flex align-items-center lh-1">
 
@@ -114,7 +119,9 @@
                                                 <div class="subheader">Subtotal vencido</div>
                                             </div>
                                             <div class="d-flex align-items-baseline">
-                                                <div class="h1 me-2 text-yellow">$6,782</div>
+                                                <div class="h1 me-2 text-yellow">
+                                                    {{'$' . number_format($saldos['totalVencidas'], 2, '.', ',')}}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -127,7 +134,9 @@
                                                 <div class="subheader">Subtotal no vencido</div>
                                             </div>
                                             <div class="d-flex align-items-baseline">
-                                                <div class="h1 me-2 text-green">$2,986</div>
+                                                <div class="h1 me-2 text-green">
+                                                    {{'$' . number_format($saldos['totalNoVencidas'], 2, '.', ',')}}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -140,7 +149,9 @@
                                                 <div class="subheader">Saldo total</div>
                                             </div>
                                             <div class="d-flex align-items-baseline">
-                                                <div class="h1 me-2 text-primary">$6,782</div>
+                                                <div class="h1 me-2 text-primary">
+                                                    {{'$' . number_format($saldos['saldo_total'], 2, '.', ',')}}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -163,50 +174,46 @@
                                             <td>
                                                 <div class="text-secondary">Más de 120 días</div>
                                             </td>
-                                            <td class="text-end">$1.800,00</td>
+                                            <td class="text-end">
+                                                {{'$' . number_format($saldos['mayor_a_120'], 2, '.', ',')}}
+                                            </td>
                                         </tr>
                                         <tr>
 
                                             <td>
                                                 <div class="text-secondary">De 91 a 120 días</div>
                                             </td>
-                                            <td class="text-end">$1.800,00</td>
+                                            <td class="text-end">
+                                                {{'$' . number_format($saldos['91_120'], 2, '.', ',')}}
+                                            </td>
                                         </tr>
                                         <tr>
 
                                             <td>
                                                 <div class="text-secondary">De 61 a 90 días</div>
                                             </td>
-                                            <td class="text-end">$1.800,00</td>
+                                            <td class="text-end">
+                                                {{'$' . number_format($saldos['61_90'], 2, '.', ',')}}
+                                            </td>
                                         </tr>
                                         <tr>
 
                                             <td>
                                                 <div class="text-secondary">De 31 a 60 días</div>
                                             </td>
-                                            <td class="text-end">$1.800,00</td>
+                                            <td class="text-end">
+                                                {{'$' . number_format($saldos['31_60'], 2, '.', ',')}}
+                                            </td>
                                         </tr>
                                         <tr>
 
                                             <td>
                                                 <div class="text-secondary">De 01 a 30 días</div>
                                             </td>
-                                            <td class="text-end">$1.800,00</td>
+                                            <td class="text-end">
+                                                {{'$' . number_format($saldos['1_30'], 2, '.', ',')}}
+                                            </td>
                                         </tr>
-                                        {{-- <tr>
-                                            <td colspan="1" class="text-end">Subtotal vencido</td>
-                                            <td class="text-end text-red">$25.000,00</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="1" class="text-end">Subtotal no vencido</td>
-                                            <td class="text-end text-green">$25.000,00</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="1" class="strong text-uppercase text-end">
-                                                Saldo total</td>
-                                            <td class="strong text-end text-primary">$30.000,00</td>
-                                        </tr> --}}
                                     </tbody>
                                 </table>
                             </div>
@@ -223,7 +230,8 @@
                                     <h3 class="card-title">Saldos pendientes</h3>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-selectable card-table table-vcenter table-nowrap">
+                                    <table id="facturasTable"
+                                        class="table table-selectable card-table table-vcenter table-nowrap">
                                         <thead>
                                             <tr>
                                                 <th>Fecha de transacción</th>
@@ -235,93 +243,41 @@
                                                 <th>Importe total</th>
                                                 <th>Saldo pendiente</th>
                                                 <th>Moneda</th>
-                                                <th>Estatus</th>
-                                                <th>Nota de factura</th>
-                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>25/06/2025</td>
+                                            @foreach ($facturas as $factura)
+                                                <tr>
+                                                    <td>{{ $factura['transaction_date'] }}</td>
 
-                                                <td><span class="text-secondary">FACTURA</span></td>
+                                                    <td><span class="text-secondary">
+                                                            @if(Str::startsWith($factura['document_number'], 'FAC'))
+                                                                FACTURA
+                                                            @else
+                                                                ERROR
+                                                            @endif
+                                                        </span></td>
 
-                                                <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
-                                                </td>
+                                                    <td><a href="invoice.html" class="text-reset"
+                                                            tabindex="-1">{{ $factura['document_number'] }}</a>
+                                                    </td>
 
-                                                <td>694780</td>
+                                                    <td>{{ $factura['folio_sat'] }}</td>
 
-                                                <td>25/06/2025</td>
+                                                    <td>{{ $factura['due_date'] }}</td>
 
-                                                <td>2</td>
+                                                    <td>{{ $factura['dias_vencidos'] }}</td>
 
-                                                <td>$4,923.72</td>
+                                                    <td>{{ $factura['total_amount'] }}</td>
 
-                                                <td>$4,923.72</td>
+                                                    <td>{{ $factura['amount_unpaid'] }}</td>
 
-                                                <td>
-                                                    <span class="flag flag-xs flag-country-mx me-2"></span>
-                                                    MEX
-                                                </td>
-                                                <td><span class="badge bg-success me-1"></span>Factura abierta</td>
-                                                <td>
-                                                    PONIENTE
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>25/06/2025</td>
-
-                                                <td><span class="text-secondary">FACTURA</span></td>
-
-                                                <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
-                                                </td>
-
-                                                <td>694780</td>
-
-                                                <td>25/06/2025</td>
-
-                                                <td>2</td>
-
-                                                <td>$4,923.72</td>
-
-                                                <td>$4,923.72</td>
-
-                                                <td>
-                                                    <span class="flag flag-xs flag-country-mx me-2"></span>
-                                                    MEX
-                                                </td>
-                                                <td><span class="badge bg-success me-1"></span>Factura abierta</td>
-                                                <td>
-                                                    PONIENTE
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>25/06/2025</td>
-
-                                                <td><span class="text-secondary">FACTURA</span></td>
-
-                                                <td><a href="invoice.html" class="text-reset" tabindex="-1">FAC-IXT78944</a>
-                                                </td>
-
-                                                <td>694780</td>
-
-                                                <td>25/06/2025</td>
-
-                                                <td>2</td>
-
-                                                <td>$4,923.72</td>
-
-                                                <td>$4,923.72</td>
-
-                                                <td>
-                                                    <span class="flag flag-xs flag-country-mx me-2"></span>
-                                                    MEX
-                                                </td>
-                                                <td><span class="badge bg-success me-1"></span>Factura abierta</td>
-                                                <td>
-                                                    PONIENTE
-                                                </td>
-                                            </tr>
+                                                    <td>
+                                                        <span class="flag flag-xs flag-country-mx me-2"></span>
+                                                        {{ $factura['currency_name'] }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -337,12 +293,27 @@
         </div>
     </div>
 
-    @include('estados_de_cuenta.cliente_estado_tom')
-
+    <style>
+        .progress-bar {
+            transition: width 1.5s ease;
+            /* Adjust duration as you like */
+        }
+    </style>
 @endsection
 
 @section('scripts')
 
+    {{-- animacion barrita --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bars = document.querySelectorAll('.progress-bar');
+            bars.forEach(bar => {
+                const width = bar.getAttribute('data-width');
+                bar.style.width = width + '%';
+            });
+        });
+    </script>
     {{-- Saldos Vencidos --}}
     <script>
         // Definir etiquetas de los meses
@@ -352,8 +323,8 @@
         const data = {
             labels: labels,
             datasets: [{
-                label: 'Mi Primer Dataset',
-                data: [{{$saldosVencidos['1_30']}}, {{$saldosVencidos['31_60']}}, {{$saldosVencidos['61_90']}}, {{$saldosVencidos['91_120']}}, {{$saldosVencidos['mayor_a_120']}}],
+                label: 'Saldo Vencido',
+                data: [{{$saldos['1_30']}}, {{$saldos['31_60']}}, {{$saldos['61_90']}}, {{$saldos['91_120']}}, {{$saldos['mayor_a_120']}}],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(255, 159, 64, 0.2)',
@@ -390,6 +361,34 @@
             document.getElementById('saldosVencidos'),
             config
         );
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#facturasTable').DataTable({
+                // Optional: customize language to Spanish
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                },
+                // Optional: adjust other settings as needed
+                "pageLength": 5,
+                "order": [],
+                "columnDefs": [
+                    {
+                        // Column indexes are zero-based: column 7 is index 6
+                        "targets": [6, 7],
+                        "render": $.fn.dataTable.render.number(',', '.', 2, '$')
+                    },
+                    {
+                        // Tell column 0 to sort as European date (DD/MM/YYYY)
+                        "targets": [0, 4],
+                        "type": "date-eu"
+                    }
+
+                ],
+            });
+        });
     </script>
 
 @endsection

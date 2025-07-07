@@ -249,15 +249,40 @@ WHERE
         $countVencidos = $this->getClientesVencido($datosFacturasPendientes);
         $countNoVencidos = $this->getClientesNoVencido($datosFacturasPendientes);
         $porcentajes[] = $this->getClientesPorcentajes($countVencidos, $countNoVencidos);
-        $saldosVencidos = $this->rangosyTotalVencidas($datosFacturasPendientes);
-        dd($saldosVencidos);
+        $saldos = $this->rangosyTotalVencidas($datosFacturasPendientes);
+        $facturas = $this->getClientesDiasVencidos($datosFacturasPendientes);
         return view('estados_de_cuenta.vista-cliente', compact(
             'datosFacturasPendientes',
             'countVencidos',
             'countNoVencidos',
             'porcentajes',
-            'saldosVencidos',
+            'saldos',
+            'facturas',
         ));
+    }
+
+    private function getClientesDiasVencidos(array $datosFacturasPendientes = [])
+    {
+        $facturas = collect($datosFacturasPendientes['items']);
+
+        $facturasConDiasVencidos = $facturas->map(function ($factura) {
+            // Due date en formato d/m/Y
+            $dueDate = \Carbon\Carbon::createFromFormat('d/m/Y', $factura['due_date']);
+
+            // Fecha actual
+            //$hoy = \Carbon\Carbon::now(); // sin hora
+            $hoy = \Carbon\Carbon::now()->endOfDay();
+
+            // Diferencia en días
+            $diasVencidos = $dueDate->diffInDays($hoy, false); // false = conserva signo
+
+            // Agregar nuevo campo
+            $factura['dias_vencidos'] = $diasVencidos;
+
+            return $factura;
+        });
+        return $facturasConDiasVencidos;
+
     }
 
     private function getClientesVencido(array $datosFacturasPendientes = [])
@@ -299,9 +324,24 @@ WHERE
     private function rangosyTotalVencidas(array $datosFacturasPendientes = [])
     {
         $facturas = collect($datosFacturasPendientes['items']);
-        $totalVencidas = $facturas->sum(function ($factura) {
+        $saldo_total = $facturas->sum(function ($factura) {
             return floatval($factura['amount_unpaid']);
         });
+
+        $totalVencidas = $facturas
+            ->filter(function ($factura) {
+                return $factura['days_overdue'] >= 1;
+            })
+            ->sum(function ($factura) {
+                return floatval($factura['amount_unpaid']);
+            });
+        $totalNoVencidas = $facturas
+            ->filter(function ($factura) {
+                return $factura['days_overdue'] <= 0;
+            })
+            ->sum(function ($factura) {
+                return floatval($factura['amount_unpaid']);
+            });
         //dd($totalVencidas);
 
         $totalAmountUnpaid_1_30 = $facturas
@@ -346,6 +386,8 @@ WHERE
         //dd([$totalAmountUnpaid_1_30, $totalVencidas]);
 
         return [
+            'saldo_total' => $saldo_total,
+            'totalNoVencidas' => $totalNoVencidas,
             'totalVencidas' => $totalVencidas,
             '1_30' => $totalAmountUnpaid_1_30,
             '31_60' => $totalAmountUnpaid_31_60,
