@@ -24,6 +24,8 @@ class User extends Authenticatable
         'puesto',
         'email',
         'password',
+        'tipo',
+        'codigo_cliente',
     ];
 
     /**

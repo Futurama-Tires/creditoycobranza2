@@ -150,7 +150,7 @@
                                                     <div class="progress-bar bg-primary-lt" style="width: 65%">
                                                     </div>
                                                 </div>
-                                                <div class="progressbg-text">Poland</div>
+                                                <div class="progressbg-text">pag-123</div>
                                                 <div class="progressbg-value">65%</div>
                                             </div>
                                             <div class="progressbg">
@@ -158,7 +158,7 @@
                                                     <div class="progress-bar bg-primary-lt" style="width: 35%">
                                                     </div>
                                                 </div>
-                                                <div class="progressbg-text">Germany</div>
+                                                <div class="progressbg-text">pag-123</div>
                                                 <div class="progressbg-value">35%</div>
                                             </div>
                                             <div class="progressbg">
@@ -166,7 +166,7 @@
                                                     <div class="progress-bar bg-primary-lt" style="width: 28%">
                                                     </div>
                                                 </div>
-                                                <div class="progressbg-text">United Stated</div>
+                                                <div class="progressbg-text">ndc-123</div>
                                                 <div class="progressbg-value">28%</div>
                                             </div>
                                             <div class="progressbg">
@@ -174,7 +174,7 @@
                                                     <div class="progress-bar bg-primary-lt" style="width: 20%">
                                                     </div>
                                                 </div>
-                                                <div class="progressbg-text">United Kingdom</div>
+                                                <div class="progressbg-text">pag-123</div>
                                                 <div class="progressbg-value">20%</div>
                                             </div>
                                             <div class="progressbg">
@@ -182,7 +182,7 @@
                                                     <div class="progress-bar bg-primary-lt" style="width: 15%">
                                                     </div>
                                                 </div>
-                                                <div class="progressbg-text">France</div>
+                                                <div class="progressbg-text">ndc-123</div>
                                                 <div class="progressbg-value">15%</div>
                                             </div>
                                         </div>
