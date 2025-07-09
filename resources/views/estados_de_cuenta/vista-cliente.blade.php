@@ -25,6 +25,17 @@
                         <div class="col-auto ms-auto d-print-none">
                             <div class="d-flex">
                                 <div class="me-3">
+                                    <a href="{{ route('exportar-informacion') }}" class="btn btn-indigo">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            class="icon icon-tabler icons-tabler-outline icon-tabler-download">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                            <path d="M7 11l5 5l5 -5" />
+                                            <path d="M12 4l0 12" />
+                                        </svg>
+                                        Descargar Estado de cuenta</a>
                                 </div>
                             </div>
                         </div>
@@ -53,12 +64,11 @@
                                                         <div class="progress progress-separated mb-3">
                                                             <div class="progress-bar bg-primary" role="progressbar"
                                                                 style="width: 0%"
-                                                                data-width="{{ $porcentajes[0]['no_vencido'] }}"
+                                                                data-width="{{ $porcentajes['no_vencido'] }}"
                                                                 aria-label="No Vencido"></div>
 
                                                             <div class="progress-bar bg-danger" role="progressbar"
-                                                                style="width: 0%"
-                                                                data-width="{{ $porcentajes[0]['vencido'] }}"
+                                                                style="width: 0%" data-width="{{ $porcentajes['vencido'] }}"
                                                                 aria-label="Vencidas"></div>
                                                         </div>
                                                         <div class="row">
@@ -85,7 +95,7 @@
                                 </div>
 
                                 {{-- TOTAL SALDO VENCIDOS --}}
-                                <div class="col-sm-12 col-lg-12">
+                                <div class="col-sm-12 col-lg-6">
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="subheader">Total Saldos Vencidos</div>
@@ -100,12 +110,69 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <canvas id="saldosVencidos"></canvas>
+                                                <canvas id="saldosVencidos" style="width: 800px; height: 900px;"></canvas>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                {{-- TOTAL SALDOS A FAVOR --}}
+                                <div class="col-sm-12 col-lg-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="subheader">Total Saldos a Favor</div>
+                                            <div class="d-flex align-items-baseline mb-2">
+                                                <div class="h1 mb-0 me-2">$25,782.01</div>
+                                                <div class="me-auto">
+                                                    <span class="text-red d-inline-flex align-items-center lh-1">
+
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="progressbg">
+                                                <div class="progress progressbg-progress">
+                                                    <div class="progress-bar bg-primary-lt" style="width: 65%">
+                                                    </div>
+                                                </div>
+                                                <div class="progressbg-text">Poland</div>
+                                                <div class="progressbg-value">65%</div>
+                                            </div>
+                                            <div class="progressbg">
+                                                <div class="progress progressbg-progress">
+                                                    <div class="progress-bar bg-primary-lt" style="width: 35%">
+                                                    </div>
+                                                </div>
+                                                <div class="progressbg-text">Germany</div>
+                                                <div class="progressbg-value">35%</div>
+                                            </div>
+                                            <div class="progressbg">
+                                                <div class="progress progressbg-progress">
+                                                    <div class="progress-bar bg-primary-lt" style="width: 28%">
+                                                    </div>
+                                                </div>
+                                                <div class="progressbg-text">United Stated</div>
+                                                <div class="progressbg-value">28%</div>
+                                            </div>
+                                            <div class="progressbg">
+                                                <div class="progress progressbg-progress">
+                                                    <div class="progress-bar bg-primary-lt" style="width: 20%">
+                                                    </div>
+                                                </div>
+                                                <div class="progressbg-text">United Kingdom</div>
+                                                <div class="progressbg-value">20%</div>
+                                            </div>
+                                            <div class="progressbg">
+                                                <div class="progress progressbg-progress">
+                                                    <div class="progress-bar bg-primary-lt" style="width: 15%">
+                                                    </div>
+                                                </div>
+                                                <div class="progressbg-text">France</div>
+                                                <div class="progressbg-value">15%</div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -214,6 +281,8 @@
                                                 {{'$' . number_format($saldos['1_30'], 2, '.', ',')}}
                                             </td>
                                         </tr>
+
+
                                     </tbody>
                                 </table>
                             </div>
@@ -264,7 +333,7 @@
 
                                                     <td>{{ $factura['folio_sat'] }}</td>
 
-                                                    <td>{{ $factura['due_date'] }}</td>
+                                                    <td>{{ $factura['due_date'] ?? 'SIN FECHA' }}</td>
 
                                                     <td>{{ $factura['dias_vencidos'] }}</td>
 
@@ -273,8 +342,69 @@
                                                     <td>{{ $factura['amount_unpaid'] }}</td>
 
                                                     <td>
-                                                        <span class="flag flag-xs flag-country-mx me-2"></span>
                                                         {{ $factura['currency_name'] }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+                        {{-- TABLA SALDOS A FAVOR --}}
+
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Saldos a favor</h3>
+                                </div>
+                                <div class="table-responsive">
+                                    <table id="pagosYNotasTable"
+                                        class="table table-selectable card-table table-vcenter table-nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha de transacción</th>
+                                                <th>Tipo de transacción</th>
+                                                <th>No. Documento</th>
+                                                <th>Fecha de vencimiento</th>
+                                                <th>Importe total</th>
+                                                <th>Saldo a Favor</th>
+                                                <th>Moneda</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($pagosYNDC as $documento)
+                                                <tr>
+                                                    <td>{{ $documento['transaction_date'] }}</td>
+
+                                                    <td><span class="text-secondary">
+                                                            @if(Str::startsWith($documento['document_number'], 'PAG'))
+                                                                PAGO
+                                                            @elseif(Str::startsWith($documento['document_number'], 'NDC'))
+                                                                NOTA DE CREDITO
+                                                            @else
+                                                                Documento No Identificado
+                                                            @endif
+                                                        </span></td>
+
+                                                    <td><a href="invoice.html" class="text-reset"
+                                                            tabindex="-1">{{ $documento['document_number'] }}</a>
+                                                    </td>
+
+
+                                                    <td>{{ $documento['due_date'] ?? 'Sin fecha' }}</td>
+
+
+                                                    <td>{{ $documento['total_amount'] }}</td>
+
+                                                    <td>{{ $documento['payment_amount_unused'] }}</td>
+
+                                                    <td>
+                                                        {{ $documento['currency_name'] }}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -383,6 +513,33 @@
                     {
                         // Tell column 0 to sort as European date (DD/MM/YYYY)
                         "targets": [0, 4],
+                        "type": "date-eu"
+                    }
+
+                ],
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#pagosYNotasTable').DataTable({
+                // Optional: customize language to Spanish
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                },
+                // Optional: adjust other settings as needed
+                "pageLength": 5,
+                "order": [],
+                "columnDefs": [
+                    {
+                        // Column indexes are zero-based: column 7 is index 6
+                        "targets": [4, 5],
+                        "render": $.fn.dataTable.render.number(',', '.', 2, '$')
+                    },
+                    {
+                        // Tell column 0 to sort as European date (DD/MM/YYYY)
+                        "targets": [0],
                         "type": "date-eu"
                     }
 

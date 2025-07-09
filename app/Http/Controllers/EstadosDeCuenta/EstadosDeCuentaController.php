@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Services\NetsuiteService;
 use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class EstadosDeCuentaController extends Controller
 {
@@ -47,7 +50,7 @@ class EstadosDeCuentaController extends Controller
 
 
         $results = $this->querySuiteQL($query);
-        Log::info($results);
+        // Log::info($results);
         return response()->json($results);
     }
 
@@ -245,12 +248,25 @@ WHERE
     {
 
         $codigo_cliente = auth()->user()->codigo_cliente;
+        //mandar a llamar consulta de facturas pendientes
         $datosFacturasPendientes = $this->getClienteFacturasPendientes($codigo_cliente);
+        //contar las facturas vencidas
         $countVencidos = $this->getClientesVencido($datosFacturasPendientes);
+        //contar las facturas no vencidas
         $countNoVencidos = $this->getClientesNoVencido($datosFacturasPendientes);
-        $porcentajes[] = $this->getClientesPorcentajes($countVencidos, $countNoVencidos);
-        $saldos = $this->rangosyTotalVencidas($datosFacturasPendientes);
+        //llamar porcentajes de facturas vencidas y no vencidas
+        $porcentajes = $this->getClientesPorcentajes($countVencidos, $countNoVencidos);
+        //mandar a llamar rangos de facturas vencidas
+        $saldos = $this->rangosYTotales($datosFacturasPendientes);
+        //agregar los dias vencidos ya que hay facturas que no tienen el valor
         $facturas = $this->getClientesDiasVencidos($datosFacturasPendientes);
+        //mandar a llamar consulta de saldos a favor
+        $datosSaldosAFavorPendientes = $this->getClientesPagosYNDCPendientes($codigo_cliente);
+        //filtrar saldos a favor
+        $pagosYNDC = $this->getClientesPagosYNDCFiltrados($datosSaldosAFavorPendientes);
+        //conseguir el total de notas de credito filtradas y los valores para la grafica
+        $datosGraficaSaldosAFavor = $this->getClientesGraficaSaldosAFavor($pagosYNDC);
+
         return view('estados_de_cuenta.vista-cliente', compact(
             'datosFacturasPendientes',
             'countVencidos',
@@ -258,7 +274,63 @@ WHERE
             'porcentajes',
             'saldos',
             'facturas',
+            'pagosYNDC'
         ));
+    }
+
+    private function getClientesGraficaSaldosAFavor($pagosYNDC)
+    {
+        //dd($pagosYNDC);
+
+        $totalGeneral = $pagosYNDC->sum(function ($pago) {
+            return floatval($pago['payment_amount_unused']);
+        });
+
+        $pagosConPorcentaje = $pagosYNDC->map(function ($pago) use ($totalGeneral) {
+            $monto = floatval($pago['payment_amount_unused']);
+            $porcentaje = $totalGeneral != 0 ? ($monto / $totalGeneral) * 100 : 0;
+
+            return array_merge($pago, [
+                'percentage' => round($porcentaje, 2)
+            ]);
+        });
+
+        // Ver resultado
+        //dd($totalGeneral, $pagosConPorcentaje);
+
+        return 0;
+    }
+
+    private function getClientesPagosYNDCFiltrados(array $datosSaldosAFavorPendientes = [])
+    {
+        $pagosYNDC = collect($datosSaldosAFavorPendientes['items']);
+
+        // $documentosFiltrados = $pagosYNDC->filter(function ($documento) {
+        //     return $documento['payment_amount_unused'] >= 1;
+        // });
+        $documentosFiltrados = $pagosYNDC->filter(function ($documento) {
+            $unused = $documento['payment_amount_unused'] >= 1;
+
+            // Aquí ajustamos el formato
+            $fechaTransaccion = \Carbon\Carbon::createFromFormat('d/m/Y', $documento['transaction_date']);
+            $diasDiferencia = $fechaTransaccion->diffInDays(now());
+
+            $vigente = $diasDiferencia <= 300;
+
+            // Log::info('Filtro PagosYNDC', [
+            //     'transaction_date' => $documento['transaction_date'],
+            //     'diasDiferencia' => $diasDiferencia,
+            //     'vigente' => $vigente,
+            //     'payment_amount_unused' => $documento['payment_amount_unused'],
+            //     'unused false or true' => $unused,
+
+            // ]);
+
+            return $unused && $vigente;
+        });
+
+        return $documentosFiltrados->values();
+
     }
 
     private function getClientesDiasVencidos(array $datosFacturasPendientes = [])
@@ -267,18 +339,22 @@ WHERE
 
         $facturasConDiasVencidos = $facturas->map(function ($factura) {
             // Due date en formato d/m/Y
-            $dueDate = \Carbon\Carbon::createFromFormat('d/m/Y', $factura['due_date']);
+            if (isset($factura['due_date'])) {
+                $dueDate = \Carbon\Carbon::createFromFormat('d/m/Y', $factura['due_date']);
 
-            // Fecha actual
-            //$hoy = \Carbon\Carbon::now(); // sin hora
-            $hoy = \Carbon\Carbon::now()->endOfDay();
+                // Fecha actual
+                //$hoy = \Carbon\Carbon::now(); // sin hora
+                $hoy = \Carbon\Carbon::now()->endOfDay();
 
-            // Diferencia en días
-            $diasVencidos = $dueDate->diffInDays($hoy, false); // false = conserva signo
+                // Diferencia en días
+                $diasVencidos = $dueDate->diffInDays($hoy, false); // false = conserva signo
 
-            // Agregar nuevo campo
-            $factura['dias_vencidos'] = $diasVencidos;
+                // Agregar nuevo campo
+                $factura['dias_vencidos'] = $diasVencidos;
+            } else {
+                $factura['dias_vencidos'] = "-";
 
+            }
             return $factura;
         });
         return $facturasConDiasVencidos;
@@ -288,7 +364,7 @@ WHERE
     private function getClientesVencido(array $datosFacturasPendientes = [])
     {
         $countVencido = count(array_filter($datosFacturasPendientes['items'], function ($item) {
-            return $item['days_overdue'] > 0;
+            return isset($item['days_overdue']) && is_numeric($item['days_overdue']) && $item['days_overdue'] > 0;
         }));
         return $countVencido;
     }
@@ -296,7 +372,7 @@ WHERE
     private function getClientesNoVencido(array $datosFacturasPendientes = [])
     {
         $countNoVencido = count(array_filter($datosFacturasPendientes['items'], function ($item) {
-            return $item['days_overdue'] <= 0;
+            return isset($item['days_overdue']) && is_numeric($item['days_overdue']) && $item['days_overdue'] <= 0;
         }));
         return $countNoVencido;
     }
@@ -321,32 +397,33 @@ WHERE
         ];
     }
 
-    private function rangosyTotalVencidas(array $datosFacturasPendientes = [])
+    private function rangosYTotales(array $datosFacturasPendientes = [])
     {
         $facturas = collect($datosFacturasPendientes['items']);
+
         $saldo_total = $facturas->sum(function ($factura) {
             return floatval($factura['amount_unpaid']);
         });
 
         $totalVencidas = $facturas
             ->filter(function ($factura) {
-                return $factura['days_overdue'] >= 1;
+                return isset($factura['days_overdue']) && $factura['days_overdue'] >= 1;
             })
             ->sum(function ($factura) {
                 return floatval($factura['amount_unpaid']);
             });
+
         $totalNoVencidas = $facturas
             ->filter(function ($factura) {
-                return $factura['days_overdue'] <= 0;
+                return isset($factura['days_overdue']) && $factura['days_overdue'] <= 0;
             })
             ->sum(function ($factura) {
                 return floatval($factura['amount_unpaid']);
             });
-        //dd($totalVencidas);
 
         $totalAmountUnpaid_1_30 = $facturas
             ->filter(function ($factura) {
-                return $factura['days_overdue'] >= 1 && $factura['days_overdue'] <= 30;
+                return isset($factura['days_overdue']) && $factura['days_overdue'] >= 1 && $factura['days_overdue'] <= 30;
             })
             ->sum(function ($factura) {
                 return (float) $factura['amount_unpaid'];
@@ -354,14 +431,15 @@ WHERE
 
         $totalAmountUnpaid_31_60 = $facturas
             ->filter(function ($factura) {
-                return $factura['days_overdue'] >= 31 && $factura['days_overdue'] <= 60;
+                return isset($factura['days_overdue']) && $factura['days_overdue'] >= 31 && $factura['days_overdue'] <= 60;
             })
             ->sum(function ($factura) {
                 return (float) $factura['amount_unpaid'];
             });
+
         $totalAmountUnpaid_61_90 = $facturas
             ->filter(function ($factura) {
-                return $factura['days_overdue'] >= 61 && $factura['days_overdue'] <= 90;
+                return isset($factura['days_overdue']) && $factura['days_overdue'] >= 61 && $factura['days_overdue'] <= 90;
             })
             ->sum(function ($factura) {
                 return (float) $factura['amount_unpaid'];
@@ -369,7 +447,7 @@ WHERE
 
         $totalAmountUnpaid_91_120 = $facturas
             ->filter(function ($factura) {
-                return $factura['days_overdue'] >= 91 && $factura['days_overdue'] <= 120;
+                return isset($factura['days_overdue']) && $factura['days_overdue'] >= 91 && $factura['days_overdue'] <= 120;
             })
             ->sum(function ($factura) {
                 return (float) $factura['amount_unpaid'];
@@ -377,13 +455,19 @@ WHERE
 
         $totalAmountUnpaid_mayor_a_120 = $facturas
             ->filter(function ($factura) {
-                return $factura['days_overdue'] > 120;
+                return isset($factura['days_overdue']) && $factura['days_overdue'] > 120;
             })
             ->sum(function ($factura) {
                 return (float) $factura['amount_unpaid'];
             });
 
-        //dd([$totalAmountUnpaid_1_30, $totalVencidas]);
+        $otras = $facturas
+            ->filter(function ($factura) {
+                return !isset($factura['days_overdue']);
+            })
+            ->sum(function ($factura) {
+                return (float) $factura['amount_unpaid'];
+            });
 
         return [
             'saldo_total' => $saldo_total,
@@ -394,8 +478,10 @@ WHERE
             '61_90' => $totalAmountUnpaid_61_90,
             '91_120' => $totalAmountUnpaid_91_120,
             'mayor_a_120' => $totalAmountUnpaid_mayor_a_120,
+            'otras' => $otras,
         ];
     }
+
 
 
     //Funcion para mandar a llamar los clientes por codigo
@@ -460,5 +546,107 @@ WHERE
         ";
 
         return $this->querySuiteQL($query);
+    }
+
+    public function getClientesPagosYNDCPendientes($codigo_cliente)
+    {
+
+        $query = "SELECT
+        BUILTIN.DF(Customer.entityid) AS entity_id,
+        BUILTIN.DF(Customer.altname) AS alt_name,
+        BUILTIN.DF(Customer.custentitycodigo_cliente) AS customer_code,
+        BUILTIN.DF(Customer.custentity_rfc) AS rfc,
+        BUILTIN.DF(transaction_SUB.fullname) AS status,
+        BUILTIN.DF(transaction_SUB.trandate) AS transaction_date,
+        BUILTIN.DF(transaction_SUB.typebaseddocumentnumber) AS document_number,
+        BUILTIN.DF(transaction_SUB.custbody_foliosat) AS folio_sat,
+        BUILTIN.DF(transaction_SUB.lastname) AS employee_lastname,
+        BUILTIN.DF(transaction_SUB.firstname) AS employee_firstname,
+        BUILTIN.DF(transaction_SUB.duedate) AS due_date,
+        BUILTIN.DF(currency.name) AS currency_name,
+        transaction_SUB.foreigntotal AS total_amount,
+        transaction_SUB.foreignpaymentamountunused AS payment_amount_unused,
+        transaction_SUB.foreignamountunpaid AS amount_unpaid
+        FROM
+            Customer
+        LEFT JOIN currency ON Customer.currency = currency.ID
+        LEFT JOIN (
+            SELECT
+                t.entity,
+                ts.fullname,
+                t.trandate,
+                t.typebaseddocumentnumber,
+                t.custbody_foliosat,
+                e.lastname,
+                e.firstname,
+                t.duedate,
+                t.foreigntotal,
+                t.foreignpaymentamountunused,
+                t.foreignamountunpaid,
+                t.TYPE AS transaction_type,
+                t.foreignpaymentamountunused AS unused_payment_criteria
+            FROM
+                transaction t
+            LEFT JOIN employee e ON t.employee = e.ID
+            LEFT JOIN TransactionStatus ts ON
+                t.TYPE = ts.trantype AND
+                t.status = ts.ID AND
+                t.customtype = ts.trancustomtype
+        ) transaction_SUB ON Customer.ID = transaction_SUB.entity
+        LEFT JOIN employee employee_0 ON Customer.salesrep = employee_0.ID
+        WHERE
+            employee_0.subsidiary IN ('3') AND
+            Customer.altname IS NOT NULL AND
+            transaction_SUB.transaction_type IN ('CustCred', 'CustPymt') AND
+            transaction_SUB.unused_payment_criteria > 0 AND
+            Customer.custentitycodigo_cliente = '$codigo_cliente'
+        ";
+
+        return $this->querySuiteQL($query);
+    }
+
+    public function downloadExcelCliente()
+    {
+        $templatePath = storage_path('app/Templates/plantilla_estado_de_cuenta_cliente.xlsx');
+        $spreadsheet = IOFactory::load($templatePath);
+        $sheet = $spreadsheet->getActiveSheet();
+        $drawing = new Drawing();
+        $drawing->setName('Logo');
+        $drawing->setDescription('Company Logo');
+        $drawing->setPath(storage_path('app/public/logo.png'));
+        $drawing->setCoordinates('B1');
+        $drawing->setHeight(140); // px
+        $drawing->setWorksheet($sheet);
+
+
+        $codigo_cliente = auth()->user()->codigo_cliente;
+        $nombre = auth()->user()->name;
+
+        $datosFacturasPendientes = $this->getClienteFacturasPendientes($codigo_cliente);
+        $countVencidos = $this->getClientesVencido($datosFacturasPendientes);
+        $countNoVencidos = $this->getClientesNoVencido($datosFacturasPendientes);
+        $porcentajes[] = $this->getClientesPorcentajes($countVencidos, $countNoVencidos);
+        $saldos = $this->rangosYTotales($datosFacturasPendientes);
+        $facturas = $this->getClientesDiasVencidos($datosFacturasPendientes);
+
+        // Replace cell values
+        //$sheet->setCellValue('B2', 'Juan Pérez');
+        //$sheet->setCellValue('C5', date('Y-m-d'));
+        $sheet->setCellValue('C10', $saldos['mayor_a_120']);
+        $sheet->setCellValue('C11', $saldos['91_120']);
+        $sheet->setCellValue('C12', $saldos['61_90']);
+        $sheet->setCellValue('C13', $saldos['31_60']);
+        $sheet->setCellValue('C14', $saldos['1_30']);
+        $sheet->setCellValue('G12', $saldos['totalVencidas']);
+        $sheet->setCellValue('G13', $saldos['totalNoVencidas']);
+        $sheet->setCellValue('G14', $saldos['saldo_total']);
+        $sheet->setCellValue('E6', $nombre);
+        $sheet->getStyle('E6')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, 'reporte.xlsx');
     }
 }

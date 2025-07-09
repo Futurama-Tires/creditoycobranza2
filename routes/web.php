@@ -90,4 +90,8 @@ Route::get('/netsuite/get-fac-vista-cliente', [EstadosDeCuentaController::class,
     ->middleware(['auth', 'verified'])
     ->name('fac-vista-cliente');
 
+Route::get('/exportar-informacion', [EstadosDeCuentaController::class, 'downloadExcelCliente'])
+    ->middleware(['auth', 'verified'])
+    ->name('exportar-informacion');
+
 require __DIR__ . '/auth.php';
