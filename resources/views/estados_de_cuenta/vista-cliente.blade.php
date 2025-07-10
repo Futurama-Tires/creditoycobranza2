@@ -117,58 +117,33 @@
                                 </div>
 
                                 {{-- TOTAL SALDOS A FAVOR --}}
-                                <div class="col-sm-12 col-lg-6">
+                                <div class="col-sm-12 col-lg-6 overflow-y: auto;">
                                     <div class="card">
-                                        <div class="card-body">
+                                        <div class="card-body ">
                                             <div class="subheader">Total Saldos a Favor</div>
+
                                             <div class="d-flex align-items-baseline mb-2">
-                                                <div class="h1 mb-0 me-2">$25,782.01</div>
+                                                <div class="h1 mb-0 me-2">
+                                                    {{'$' . number_format($datosGraficaSaldosAFavor['totalGeneral'], 2, '.', ',')}}
+                                                </div>
                                                 <div class="me-auto">
                                                     <span class="text-red d-inline-flex align-items-center lh-1">
 
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div class="progressbg">
-                                                <div class="progress progressbg-progress">
-                                                    <div class="progress-bar bg-primary-lt" style="width: 65%">
+                                            @foreach ($datosGraficaSaldosAFavor['pagosConPorcentaje'] as $porcentaje)
+                                                <div class="progressbg">
+                                                    <div class="progress progressbg-progress">
+                                                        <div class="progress-bar bg-primary-lt"
+                                                            style="width: {{ $porcentaje['percentage'] }}%">
+                                                        </div>
                                                     </div>
+                                                    <div class="progressbg-text">{{ $porcentaje['document_number'] }} </div>
+                                                    <div class="progressbg-value">{{ $porcentaje['percentage'] }}%</div>
                                                 </div>
-                                                <div class="progressbg-text">Poland</div>
-                                                <div class="progressbg-value">65%</div>
-                                            </div>
-                                            <div class="progressbg">
-                                                <div class="progress progressbg-progress">
-                                                    <div class="progress-bar bg-primary-lt" style="width: 35%">
-                                                    </div>
-                                                </div>
-                                                <div class="progressbg-text">Germany</div>
-                                                <div class="progressbg-value">35%</div>
-                                            </div>
-                                            <div class="progressbg">
-                                                <div class="progress progressbg-progress">
-                                                    <div class="progress-bar bg-primary-lt" style="width: 28%">
-                                                    </div>
-                                                </div>
-                                                <div class="progressbg-text">United Stated</div>
-                                                <div class="progressbg-value">28%</div>
-                                            </div>
-                                            <div class="progressbg">
-                                                <div class="progress progressbg-progress">
-                                                    <div class="progress-bar bg-primary-lt" style="width: 20%">
-                                                    </div>
-                                                </div>
-                                                <div class="progressbg-text">United Kingdom</div>
-                                                <div class="progressbg-value">20%</div>
-                                            </div>
-                                            <div class="progressbg">
-                                                <div class="progress progressbg-progress">
-                                                    <div class="progress-bar bg-primary-lt" style="width: 15%">
-                                                    </div>
-                                                </div>
-                                                <div class="progressbg-text">France</div>
-                                                <div class="progressbg-value">15%</div>
-                                            </div>
+                                            @endforeach
+
                                         </div>
 
                                     </div>

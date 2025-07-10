@@ -10,7 +10,8 @@ use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
-
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 class EstadosDeCuentaController extends Controller
 {
     protected $netsuite;
@@ -274,7 +275,8 @@ WHERE
             'porcentajes',
             'saldos',
             'facturas',
-            'pagosYNDC'
+            'pagosYNDC',
+            'datosGraficaSaldosAFavor',
         ));
     }
 
@@ -294,11 +296,19 @@ WHERE
                 'percentage' => round($porcentaje, 2)
             ]);
         });
+        // Ordenar por porcentaje descendente y tomar los primeros 5
+        $pagosConPorcentaje = $pagosConPorcentaje
+            ->sortByDesc('percentage')
+            ->take(5)
+            ->values(); // Para reindexar la colección
 
         // Ver resultado
         //dd($totalGeneral, $pagosConPorcentaje);
 
-        return 0;
+        return [
+            'totalGeneral' => $totalGeneral,
+            'pagosConPorcentaje' => $pagosConPorcentaje,
+        ];
     }
 
     private function getClientesPagosYNDCFiltrados(array $datosSaldosAFavorPendientes = [])
@@ -640,8 +650,23 @@ WHERE
         $sheet->setCellValue('G12', $saldos['totalVencidas']);
         $sheet->setCellValue('G13', $saldos['totalNoVencidas']);
         $sheet->setCellValue('G14', $saldos['saldo_total']);
-        $sheet->setCellValue('E6', $nombre);
+        $sheet->setCellValue('E6', $nombre . " - " . $codigo_cliente);
         $sheet->getStyle('E6')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
+
+        $row = 19; // empezamos en fila 19
+
+        foreach ($facturas as $factura) {
+            $sheet->setCellValue("B{$row}", $factura['transaction_date']);
+            $sheet->setCellValue("C{$row}", $factura['document_number']);
+            $sheet->setCellValue("D{$row}", $factura['folio_sat']);
+            $sheet->setCellValue("E{$row}", $factura['due_date'] ?? ''); // null-safe
+            $sheet->setCellValue("F{$row}", $factura['days_overdue'] ?? '');
+            $sheet->setCellValue("G{$row}", $factura['total_amount']);
+            $sheet->setCellValue("H{$row}", $factura['amount_unpaid']);
+            $sheet->getStyle("B{$row}:H{$row}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+
+            $row++; // avanzamos a la siguiente fila
+        }
 
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
 
