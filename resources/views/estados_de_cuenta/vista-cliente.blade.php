@@ -71,7 +71,6 @@
                                                                 <span>Vencidas</span>
                                                                 <span
                                                                     class="d-none d-md-inline ms-2 text-secondary">{{$countVencidos}}</span>
-
                                                             </div>
                                                         </div>
                                                     </div>

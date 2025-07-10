@@ -243,14 +243,13 @@ WHERE
     //seccion clientes
     public function getFacturasVistaCliente()
     {
-
         $codigo_cliente = auth()->user()->codigo_cliente;
         $datosFacturasPendientes = $this->getClienteFacturasPendientes($codigo_cliente);
         $countVencidos = $this->getClientesVencido($datosFacturasPendientes);
         $countNoVencidos = $this->getClientesNoVencido($datosFacturasPendientes);
         $porcentajes[] = $this->getClientesPorcentajes($countVencidos, $countNoVencidos);
         $saldosVencidos = $this->rangosyTotalVencidas($datosFacturasPendientes);
-        dd($saldosVencidos);
+       
         return view('estados_de_cuenta.vista-cliente', compact(
             'datosFacturasPendientes',
             'countVencidos',
