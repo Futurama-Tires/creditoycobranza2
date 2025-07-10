@@ -12,6 +12,8 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+
 class EstadosDeCuentaController extends Controller
 {
     protected $netsuite;
@@ -247,7 +249,6 @@ WHERE
     //seccion clientes
     public function getFacturasVistaCliente()
     {
-
         $codigo_cliente = auth()->user()->codigo_cliente;
         //mandar a llamar consulta de facturas pendientes
         $datosFacturasPendientes = $this->getClienteFacturasPendientes($codigo_cliente);
@@ -340,7 +341,6 @@ WHERE
         });
 
         return $documentosFiltrados->values();
-
     }
 
     private function getClientesDiasVencidos(array $datosFacturasPendientes = [])
@@ -363,12 +363,10 @@ WHERE
                 $factura['dias_vencidos'] = $diasVencidos;
             } else {
                 $factura['dias_vencidos'] = "-";
-
             }
             return $factura;
         });
         return $facturasConDiasVencidos;
-
     }
 
     private function getClientesVencido(array $datosFacturasPendientes = [])
@@ -617,31 +615,43 @@ WHERE
 
     public function downloadExcelCliente()
     {
+        $codigoCliente = auth()->user()->codigo_cliente;
+        $nombreCliente = auth()->user()->name . " " . auth()->user()->apellido;
+
+        return $this->generarEstadoCuentaExcel($codigoCliente, $nombreCliente);
+    }
+
+    public function downloadExcelEstadoDeCuenta($codigoCliente)
+    {
+        $datosFacturasPendientes = $this->getClienteFacturasPendientes($codigoCliente);
+        $nombreCliente = $datosFacturasPendientes['items'][0]['altname'] ?? 'Cliente';
+
+        return $this->generarEstadoCuentaExcel($codigoCliente, $nombreCliente, $datosFacturasPendientes);
+    }
+
+    private function generarEstadoCuentaExcel(string $codigoCliente, string $nombreCliente, $datosFacturasPendientes = null)
+    {
         $templatePath = storage_path('app/Templates/plantilla_estado_de_cuenta_cliente.xlsx');
         $spreadsheet = IOFactory::load($templatePath);
         $sheet = $spreadsheet->getActiveSheet();
+
         $drawing = new Drawing();
         $drawing->setName('Logo');
         $drawing->setDescription('Company Logo');
         $drawing->setPath(storage_path('app/public/logo.png'));
         $drawing->setCoordinates('B1');
-        $drawing->setHeight(140); // px
+        $drawing->setHeight(140);
         $drawing->setWorksheet($sheet);
 
-
-        $codigo_cliente = auth()->user()->codigo_cliente;
-        $nombre = auth()->user()->name;
-
-        $datosFacturasPendientes = $this->getClienteFacturasPendientes($codigo_cliente);
+        // Reutiliza datos si vienen del controlador externo o haz la consulta si no
+        $datosFacturasPendientes = $datosFacturasPendientes ?? $this->getClienteFacturasPendientes($codigoCliente);
         $countVencidos = $this->getClientesVencido($datosFacturasPendientes);
         $countNoVencidos = $this->getClientesNoVencido($datosFacturasPendientes);
-        $porcentajes[] = $this->getClientesPorcentajes($countVencidos, $countNoVencidos);
+        $porcentajes = [$this->getClientesPorcentajes($countVencidos, $countNoVencidos)];
         $saldos = $this->rangosYTotales($datosFacturasPendientes);
         $facturas = $this->getClientesDiasVencidos($datosFacturasPendientes);
 
-        // Replace cell values
-        //$sheet->setCellValue('B2', 'Juan Pérez');
-        //$sheet->setCellValue('C5', date('Y-m-d'));
+        // Insertar datos en celdas
         $sheet->setCellValue('C10', $saldos['mayor_a_120']);
         $sheet->setCellValue('C11', $saldos['91_120']);
         $sheet->setCellValue('C12', $saldos['61_90']);
@@ -650,28 +660,42 @@ WHERE
         $sheet->setCellValue('G12', $saldos['totalVencidas']);
         $sheet->setCellValue('G13', $saldos['totalNoVencidas']);
         $sheet->setCellValue('G14', $saldos['saldo_total']);
-        $sheet->setCellValue('E6', $nombre . " - " . $codigo_cliente);
+        $sheet->setCellValue('E6', $nombreCliente . " - " . $codigoCliente);
         $sheet->getStyle('E6')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
+        $sheet->getStyle("C10:C14")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_ACCOUNTING_USD);
+        $sheet->getStyle("G12:G14")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_ACCOUNTING_USD);
 
-        $row = 19; // empezamos en fila 19
+        //Autoajuste de celdas
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
 
+        // Llenar tabla con facturas
+        $row = 19;
         foreach ($facturas as $factura) {
             $sheet->setCellValue("B{$row}", $factura['transaction_date']);
             $sheet->setCellValue("C{$row}", $factura['document_number']);
             $sheet->setCellValue("D{$row}", $factura['folio_sat']);
-            $sheet->setCellValue("E{$row}", $factura['due_date'] ?? ''); // null-safe
+            $sheet->setCellValue("E{$row}", $factura['due_date'] ?? '');
             $sheet->setCellValue("F{$row}", $factura['days_overdue'] ?? '');
             $sheet->setCellValue("G{$row}", $factura['total_amount']);
             $sheet->setCellValue("H{$row}", $factura['amount_unpaid']);
-            $sheet->getStyle("B{$row}:H{$row}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
-
-            $row++; // avanzamos a la siguiente fila
+            $sheet->getStyle("B{$row}:H{$row}")
+                ->getBorders()
+                ->getAllBorders()
+                ->setBorderStyle(Border::BORDER_THIN);
+            $sheet->getStyle("G{$row}:H{$row}")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_ACCOUNTING_USD);
+            $row++;
         }
+
+        // Crear nombre del archivo
+        $fecha = now()->format('d-m-Y');
+        $nombreArchivo = "ESTADO DE CUENTA {$nombreCliente} {$fecha}.xlsx";
 
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
 
         return response()->streamDownload(function () use ($writer) {
             $writer->save('php://output');
-        }, 'reporte.xlsx');
+        }, $nombreArchivo);
     }
 }

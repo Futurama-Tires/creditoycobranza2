@@ -80,6 +80,8 @@ Route::middleware(['auth', 'empleado'])->group(function () {
     Route::post('/netsuite/get-fac-pag-ndc', [EstadosDeCuentaController::class, 'getFacturasPagosNDC'])->name('getFacturasPagosNDC');
     Route::get('/netsuite/get-customers', [EstadosDeCuentaController::class, 'getCustomers']);
     Route::get('/load-customer-data', [EstadosDeCuentaController::class, 'loadCustomerData']);
+    Route::get('/estado-cuenta/descargar/{customer_code}', [EstadosDeCuentaController::class, 'downloadExcelEstadoDeCuenta'])
+        ->name('estado-cuenta.descargar');
     Route::resource('users', UserController::class);
 
 
