@@ -19,7 +19,7 @@
                                 </ol>
                             </div>
                             <h2 class="page-title">
-                                Estados de cuenta - Marcelo Gutiérrez Briones
+                                Estados de cuenta - {{ auth()->user()->name }}
                             </h2>
                         </div>
                         <div class="col-auto ms-auto d-print-none">

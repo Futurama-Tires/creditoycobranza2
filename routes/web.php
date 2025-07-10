@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\ClienteController;
@@ -79,6 +80,7 @@ Route::middleware(['auth', 'empleado'])->group(function () {
     Route::post('/netsuite/get-fac-pag-ndc', [EstadosDeCuentaController::class, 'getFacturasPagosNDC'])->name('getFacturasPagosNDC');
     Route::get('/netsuite/get-customers', [EstadosDeCuentaController::class, 'getCustomers']);
     Route::get('/load-customer-data', [EstadosDeCuentaController::class, 'loadCustomerData']);
+    Route::resource('users', UserController::class);
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

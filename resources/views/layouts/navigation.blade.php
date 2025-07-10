@@ -43,15 +43,16 @@
                                     facturas</a>
                             </div>
                         </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <span>Estados de cuenta</span>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
+                                data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                <span class="nav-link-title">Conciliación de pagos</span>
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <span>Ecommerce</span>
-                            </a>
+                            <div class="dropdown-menu dropdown-menu-arrow">
+                                <a class="dropdown-item" href="{{ route('estados_de_cuenta.index') }}">Conciliar </a>
+                                <a class="dropdown-item" href="{{ route('users.index') }}">Gestionar Clientes</a>
+                            </div>
                         </li>
                     </ul>
                     <div class="nav-item dropdown">
