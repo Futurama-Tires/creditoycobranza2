@@ -16,7 +16,7 @@ class EstadosCuenta extends Component
 
     public ?int   $clienteId = null;     // ID seleccionado
     public $clienteNombre   = '';     // datos del cliente (altname, rfc …)
-
+    public $codigoCliente = null;
     //Datos de factuas
     public $facturasVencidas = 0;
     public $facturasNoVencidas = 0;
@@ -83,7 +83,7 @@ class EstadosCuenta extends Component
         #---- DATOS DE FACTURAS
         // Facturas pendientes
         $facturas = $this->getFacturasPendientes($id);
-
+        Log::info($facturas);
         // --- Métricas --------------------------------------------------------------
         [$vencidas, $noVencidas] = $this->contarFacturas($facturas['items'] ?? []);
         $this->facturasVencidas    = $vencidas;
@@ -135,12 +135,10 @@ class EstadosCuenta extends Component
                         : 0
                 ];
             }, $facturas['items'] ?? [])
-            //datos: $facturas['items'] ?? [],
         );
 
         # ---- DATOS DE SALDO A FAVOR
         // Pagos y NC con saldo
-        // En tu método selectCliente:
         $pagosNdc = $this->getPagosYNDCPendientes($id);
         $this->totalSaldoAFavor = $pagosNdc['total_payment_amount_unused'];
 
@@ -184,10 +182,9 @@ class EstadosCuenta extends Component
             )
         );
 
-        Log::info($this->datosSaldoAFavor);
-
         // --- Nombre del cliente ------------------------------    ----------------------
         $this->clienteNombre = $facturas['items'][0]['altname'] ?? '';
+        $this->codigoCliente = $facturas['items'][0]['customer_code'] ?? null;
     }
 
     /**
@@ -222,6 +219,14 @@ class EstadosCuenta extends Component
             'porcentajeNoVencido'  => round(($noVencidas   / $total) * 100, 2),
         ];
     }
+
+    public function descargarEstadoCuenta()
+    {
+        if (!$this->codigoCliente) return;
+
+        return redirect()->route('estado-cuenta.descargar', ['customer_code' => $this->codigoCliente]);
+    }
+
 
     /* ---------- 3) Consultas “tal cual” traídas de tu controlador ---------- */
     protected function getFacturasPendientes(int $id): array

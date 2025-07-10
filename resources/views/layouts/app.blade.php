@@ -30,7 +30,7 @@
     {{-- Tom Select CSS --}}
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
 
-
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 
     <style>
         body {
@@ -91,6 +91,8 @@
 
     {{-- Chart Js --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {{-- date sort data tables --}}
+    <script src="https://cdn.datatables.net/plug-ins/1.13.7/sorting/date-eu.js"></script>
 
 
     @yield('scripts')

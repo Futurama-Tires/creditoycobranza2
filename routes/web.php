@@ -79,6 +79,8 @@ Route::middleware(['auth', 'empleado'])->group(function () {
     Route::post('/netsuite/get-fac-pag-ndc', [EstadosDeCuentaController::class, 'getFacturasPagosNDC'])->name('getFacturasPagosNDC');
     Route::get('/netsuite/get-customers', [EstadosDeCuentaController::class, 'getCustomers']);
     Route::get('/load-customer-data', [EstadosDeCuentaController::class, 'loadCustomerData']);
+    Route::get('/estado-cuenta/descargar/{customer_code}', [EstadosDeCuentaController::class, 'downloadExcelEstadoDeCuenta'])
+        ->name('estado-cuenta.descargar');
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -89,5 +91,9 @@ Route::middleware(['auth', 'empleado'])->group(function () {
 Route::get('/netsuite/get-fac-vista-cliente', [EstadosDeCuentaController::class, 'getFacturasVistaCliente'])
     ->middleware(['auth', 'verified'])
     ->name('fac-vista-cliente');
+
+Route::get('/exportar-informacion', [EstadosDeCuentaController::class, 'downloadExcelCliente'])
+    ->middleware(['auth', 'verified'])
+    ->name('exportar-informacion');
 
 require __DIR__ . '/auth.php';

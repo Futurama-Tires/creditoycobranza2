@@ -1,4 +1,16 @@
 <div class="page">
+    {{-- Loader --}}
+    <div class="fullscreenDiv" id="loader" wire:loading wire:target="selectCliente">
+        <div class="spinner">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
     <div class="page-wrapper">
         <div class="page-header">
             <div class="container-xl">
@@ -15,38 +27,67 @@
                             Estados de cuenta
                         </h2>
                     </div>
-                    <div class="col-4">
-                        <div class="btn-list">
-                            <div class="position-relative w-100 ">
-                                <div class="input-icon mb-1">
-                                    <input type="text" value="" class="form-control w-100"
-                                        placeholder="Buscar cliente…" wire:model.live.debounce.1000ms="search">
-                                    <span class="input-icon-addon">
-                                        <!-- Download SVG icon from http://tabler.io/icons/icon/search -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                                            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
-                                            <path d="M21 21l-6 -6"></path>
-                                        </svg>
-                                    </span>
-                                </div>
+                    <div class="col-7 col-md-6">
+                        <div class="col-auto ms-auto d-print-none">
+                            <div class="d-flex">
 
-                                @if ($search)
-                                    {{-- Contenedor flotante en la misma posición del input --}}
-                                    <div class="dropdown-menu show w-100 shadow-none p-0"
-                                        style="max-height:18rem;overflow-y:auto;z-index:1000;">
+                                <a href="#" wire:click="descargarEstadoCuenta"
+                                    class="btn btn-primary me-2 d-none d-md-inline-block {{ $codigoCliente ? '' : 'disabled' }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-download">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                        <path d="M7 11l5 5l5 -5" />
+                                        <path d="M12 4l0 12" />
+                                    </svg>
+                                    Descargar estado de cuenta
+                                </a>
 
-                                        @if (count($suggestions) > 0)
-                                            @foreach ($suggestions as $c)
-                                                {{-- Cada fila: enlace clicable que actúa como item --}}
-                                                <a href="#"
-                                                    wire:click.prevent="selectCliente({{ $c['customer_id'] }})"
-                                                    class="dropdown-item d-flex align-items-center gap-2 py-2">
+                                <a href="#" wire:click="descargarEstadoCuenta"
+                                    class="btn btn-primary me-1 d-md-none btn-icon {{ $codigoCliente ? '' : 'disabled' }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-download">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                        <path d="M7 11l5 5l5 -5" />
+                                        <path d="M12 4l0 12" />
+                                    </svg>
+                                </a>
 
-                                                    {{-- Avatar (iniciales) con color aleatorio según ID --}}
-                                                    <span
-                                                        class="avatar avatar-sm rounded d-inline-flex align-items-center justify-content-center
+                                <div class="position-relative w-100 ">
+                                    <div class="input-icon">
+                                        <input type="text" class="form-control w-100" placeholder="Buscar cliente…"
+                                            wire:model.live.debounce.1000ms="search">
+                                        <span class="input-icon-addon">
+
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-1">
+                                                <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+                                                <path d="M21 21l-6 -6"></path>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    @if ($search)
+                                        {{-- Contenedor flotante en la misma posición del input --}}
+                                        <div class="dropdown-menu show w-100 shadow-none p-0"
+                                            style="max-height:18rem;overflow-y:auto;z-index:1000;">
+
+                                            @if (count($suggestions) > 0)
+                                                @foreach ($suggestions as $c)
+                                                    {{-- Cada fila: enlace clicable que actúa como item --}}
+                                                    <a href="#" wire:loading.class="disabled"
+                                                        wire:click.prevent="selectCliente({{ $c['customer_id'] }})"
+                                                        class="dropdown-item d-flex align-items-center gap-2 py-2">
+
+                                                        {{-- Avatar (iniciales) con color aleatorio según ID --}}
+                                                        <span
+                                                            class="avatar avatar-sm rounded d-inline-flex align-items-center justify-content-center
                                                         {{ [
                                                             'bg-primary-lt',
                                                             'bg-success-lt',
@@ -57,39 +98,41 @@
                                                             'bg-dark-lt',
                                                         ][$c['customer_id'] % 7] }}
                                                         text-white">
-                                                        {{ Str::substr($c['altname'], 0, 2) }}
-                                                    </span>
+                                                            {{ Str::substr($c['altname'], 0, 2) }}
+                                                        </span>
 
-                                                    {{-- Texto (nombre + subtexto) --}}
-                                                    <div class="flex-fill lh-sm">
-                                                        <div class="fw-bold">{{ $c['altname'] }}</div>
-                                                        <small
-                                                            class="text-secondary">ID #{{ $c['customer_id'] }}</small>
+                                                        {{-- Texto (nombre + subtexto) --}}
+                                                        <div class="flex-fill lh-sm">
+                                                            <div class="fw-bold">{{ $c['altname'] }}</div>
+                                                            <small
+                                                                class="text-secondary">ID #{{ $c['customer_id'] }}</small>
+                                                        </div>
+
+                                                        {{-- Indicador de estado --}}
+                                                        <span class="status-dot status-dot-animated bg-green"></span>
+                                                    </a>
+                                                @endforeach
+                                            @else
+                                                {{-- Mensaje si no se encontraron resultados --}}
+                                                <div class="dropdown-item text-center text-muted py-3">
+                                                    <div flex-fill lh-sm>
+                                                        <div class="fw-semibold">Cliente no encontrado</div>
+                                                        <small>Intenta con otro nombre</small>
                                                     </div>
-
-                                                    {{-- Indicador de estado --}}
-                                                    <span class="status-dot status-dot-animated bg-green"></span>
-                                                </a>
-                                            @endforeach
-                                        @else
-                                            {{-- Mensaje si no se encontraron resultados --}}
-                                            <div class="dropdown-item text-center text-muted py-3">
-                                                <div flex-fill lh-sm>
-                                                    <div class="fw-semibold">Cliente no encontrado</div>
-                                                    <small>Intenta con otro nombre</small>
                                                 </div>
-                                            </div>
-                                        @endif
+                                            @endif
 
-                                        {{-- Botón para cerrar el buscador --}}
-                                        <div class="dropdown-item text-center border-top">
-                                            <button wire:click="$set('search', '')"
-                                                class="btn btn-sm btn-outline-secondary">
-                                                Cerrar
-                                            </button>
+                                            {{-- Botón para cerrar el buscador --}}
+                                            <div class="dropdown-item text-center border-top">
+                                                <button wire:click="$set('search', '')"
+                                                    class="btn btn-sm btn-outline-secondary">
+                                                    Cerrar
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
+
 
                             </div>
                         </div>
@@ -568,12 +611,12 @@
                             const porcentaje = parseFloat(data).toFixed(2);
 
                             return `
-<div class="d-flex flex-column">
-    <div class="progress" style="height:8px;">
-        <div class="progress-bar bg-success" style="width:${porcentaje}%"></div>
-    </div>
-    <small class="text-success fw-bold mt-1">${porcentaje}% pagado</small>
-</div>`;
+                            <div class="d-flex flex-column">
+                                <div class="progress" style="height:8px;">
+                                    <div class="progress-bar bg-success" style="width:${porcentaje}%"></div>
+                                </div>
+                                <small class="text-success fw-bold mt-1">${porcentaje}% pagado</small>
+                            </div>`;
                         }
                     },
 
