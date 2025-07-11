@@ -677,7 +677,7 @@ WHERE
             $sheet->setCellValue("C{$row}", $factura['document_number']);
             $sheet->setCellValue("D{$row}", $factura['folio_sat']);
             $sheet->setCellValue("E{$row}", $factura['due_date'] ?? '');
-            $sheet->setCellValue("F{$row}", $factura['days_overdue'] ?? '');
+            $sheet->setCellValue("F{$row}", $factura['dias_vencidos'] ?? '');
             $sheet->setCellValue("G{$row}", $factura['total_amount']);
             $sheet->setCellValue("H{$row}", $factura['amount_unpaid']);
             $sheet->getStyle("B{$row}:H{$row}")
