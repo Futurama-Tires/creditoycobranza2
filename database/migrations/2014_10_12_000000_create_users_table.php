@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('apellido')->nullable();
-            $table->string('puesto');
+            $table->string('puesto')->nullable();
             $table->text('foto')->default('fotoPerfilFuturama.png')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
