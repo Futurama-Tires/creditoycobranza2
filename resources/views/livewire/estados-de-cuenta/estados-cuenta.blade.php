@@ -521,7 +521,17 @@
                 ordering: true, // Permite ordenamiento manual
                 "pageLength": 5,
                 columns: [{
-                        data: 'transaction_date'
+                        data: 'transaction_date',
+                        render: function(data, type, row) {
+                            if (type === "sort" || type === "type") {
+                                const [day, month, year] = data.split("/");
+                                // Asegurar que día y mes tengan 2 dígitos
+                                const d = day.padStart(2, '0');
+                                const m = month.padStart(2, '0');
+                                return `${year}${m}${d}`; // Formato YYYYMMDD para ordenar
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: null,
@@ -537,6 +547,13 @@
                         data: 'due_date',
                         render(data, type, row) {
                             if (data) {
+                                if (type === "sort" || type === "type") {
+                                    const [day, month, year] = data.split("/");
+                                    // Asegurar que día y mes tengan 2 dígitos
+                                    const d = day.padStart(2, '0');
+                                    const m = month.padStart(2, '0');
+                                    return `${year}${m}${d}`; // Formato YYYYMMDD para ordenar
+                                }
                                 return data;
                             }
 
@@ -685,7 +702,17 @@
                 ordering: true, // Permite ordenamiento manual
                 "pageLength": 5,
                 columns: [{
-                        data: 'transaction_date'
+                        data: 'transaction_date',
+                        render: function(data, type, row) {
+                            if (type === "sort" || type === "type") {
+                                const [day, month, year] = data.split("/");
+                                // Asegurar que día y mes tengan 2 dígitos
+                                const d = day.padStart(2, '0');
+                                const m = month.padStart(2, '0');
+                                return `${year}${m}${d}`; // Formato YYYYMMDD para ordenar
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: 'document_number',

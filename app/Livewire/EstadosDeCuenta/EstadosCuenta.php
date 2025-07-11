@@ -124,14 +124,14 @@ class EstadosCuenta extends Component
                     'document_number' => $f['document_number'] ?? null,
                     'folio_sat' => $f['folio_sat'] ?? null,
                     'due_date' => $f['due_date'] ?? null,
-                    'days_overdue' => $f['days_overdue'] ?? null,
+                    'days_overdue' => $this->getClientesDiasVencidos($f['due_date']),
                     'total_amount' => $f['total_amount'] ?? null,
                     'amount_unpaid' => $f['amount_unpaid'] ?? null,
                     'currency_name' => $f['currency_name'] ?? null,
                     'status' => $f['status'] ?? null,
                     'memo' => $f['memo'] ?? null,
                     'porcentaje_pagado' => $this->saldosFacturasNumericos['saldoTotal'] != 0
-                        ? (($f['total_amount'] - $f['amount_unpaid']) * 100 / $this->saldosFacturasNumericos['saldoTotal'])
+                        ? (($f['total_amount'] - $f['amount_unpaid']) * 100 / $f['total_amount'])
                         : 0
                 ];
             }, $facturas['items'] ?? [])
@@ -225,6 +225,26 @@ class EstadosCuenta extends Component
         if (!$this->codigoCliente) return;
 
         return redirect()->route('estado-cuenta.descargar', ['customer_code' => $this->codigoCliente]);
+    }
+
+    //Calcular días vencidos
+    protected function getClientesDiasVencidos($fecha)
+    {
+        // Due date en formato d/m/Y
+        if (isset($fecha)) {
+            $dueDate = \Carbon\Carbon::createFromFormat('d/m/Y', $fecha);
+
+            // Fecha actual
+            //$hoy = \Carbon\Carbon::now(); // sin hora
+            $hoy = \Carbon\Carbon::now()->endOfDay();
+
+            // Diferencia en días
+            $diasVencidos = $dueDate->diffInDays($hoy, false); // false = conserva signo
+
+            return $diasVencidos;
+        } else {
+            return "-";
+        }
     }
 
 

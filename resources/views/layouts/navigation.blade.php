@@ -44,13 +44,13 @@
                             </div>
                         </li>
 
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown {{ request()->routeIs('estados_de_cuenta.*') || request()->routeIs('users.*') ? 'active' : '' }}">
                             <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
                                 data-bs-auto-close="outside" role="button" aria-expanded="false">
-                                <span class="nav-link-title">Conciliación de pagos</span>
+                                <span class="nav-link-title">Estados de cuenta</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-arrow">
-                                <a class="dropdown-item" href="{{ route('estados_de_cuenta.index') }}">Conciliar </a>
+                                <a class="dropdown-item" href="{{ route('estados_de_cuenta.index') }}">Estado de cuenta</a>
                                 <a class="dropdown-item" href="{{ route('users.index') }}">Gestionar Clientes</a>
                             </div>
                         </li>

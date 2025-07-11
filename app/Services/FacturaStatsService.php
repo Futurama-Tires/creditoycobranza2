@@ -9,11 +9,11 @@ class FacturaStatsService
      * Agrega, quita o reordena rangos sin tocar la lógica.
      */
     private const RANGOS_VENCIDOS = [
-        'noPagado_1_30'    => [1,  30],
-        'noPagado_31_60'   => [31,  60],
-        'noPagado_61_90'   => [61,  90],
-        'noPagado_91_120'  => [91, 120],
         'noPagado_mas_120' => [121, PHP_INT_MAX],
+        'noPagado_91_120'  => [91, 120],
+        'noPagado_61_90'   => [61,  90],
+        'noPagado_31_60'   => [31,  60],
+        'noPagado_1_30'    => [1,  30],
     ];
 
     /* ===================================================
