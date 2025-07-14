@@ -35,7 +35,15 @@
                                             <path d="M5 12l14 0" />
                                         </svg>
                                         Ingresar Cliente</a>
+
+                                    <form action="{{ route('users.import') }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="file" name="file" required>
+                                        <button type="submit">Importar Usuarios</button>
+                                    </form>
+
                                 </div>
+
                             </div>
                         </div>
                     </div>
