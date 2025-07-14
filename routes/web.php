@@ -88,14 +88,15 @@ Route::middleware(['auth', 'empleado'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/exportar-informacion', [EstadosDeCuentaController::class, 'downloadExcelCliente'])
+        ->middleware(['auth', 'verified'])
+        ->name('exportar-informacion');
 });
 
 Route::get('/netsuite/get-fac-vista-cliente', [EstadosDeCuentaController::class, 'getFacturasVistaCliente'])
     ->middleware(['auth', 'verified'])
     ->name('fac-vista-cliente');
 
-Route::get('/exportar-informacion', [EstadosDeCuentaController::class, 'downloadExcelCliente'])
-    ->middleware(['auth', 'verified'])
-    ->name('exportar-informacion');
 
 require __DIR__ . '/auth.php';

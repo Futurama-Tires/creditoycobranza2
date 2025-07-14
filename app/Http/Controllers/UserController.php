@@ -37,6 +37,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'address' => 'nullable|string|max:255',
+            'codigo_cliente' => 'required|string|max:255',
         ]);
 
         User::create([
