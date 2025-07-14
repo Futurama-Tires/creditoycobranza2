@@ -21,39 +21,48 @@
                                 <span>Inicio</span>
                             </a>
                         </li>
-                        <li class="nav-item dropdown {{ request()->routeIs('clientes.*') ? 'active' : '' }}">
-                            <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
-                                data-bs-auto-close="outside" role="button" aria-expanded="false">
-                                <span class="nav-link-title">Identificación BBVA</span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-arrow">
-                                <a class="dropdown-item" href="{{ route('clientes.importar') }}">Regitrar clientes </a>
-                                <a class="dropdown-item" href="{{ route('clientes.procesar') }}">Identificar clientes</a>
-                            </div>
-                        </li>
-                        <li
-                            class="nav-item dropdown {{ request()->routeIs('conciliacion_pagos.*') || request()->routeIs('importar-facturas-usuario-vista') ? 'active' : '' }}">
-                            <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
-                                data-bs-auto-close="outside" role="button" aria-expanded="false">
-                                <span class="nav-link-title">Conciliación de pagos</span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-arrow">
-                                <a class="dropdown-item" href="{{ route('conciliacion_pagos.index') }}">Conciliar </a>
-                                <a class="dropdown-item" href="{{ route('importar-facturas-usuario-vista') }}">Importar
-                                    facturas</a>
-                            </div>
-                        </li>
+                        @hasanyrole('admin|cobranza|tesoreria')
+                            <li class="nav-item dropdown {{ request()->routeIs('clientes.*') ? 'active' : '' }}">
+                                <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
+                                    data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                    <span class="nav-link-title">Identificación BBVA</span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-arrow">
+                                    <a class="dropdown-item" href="{{ route('clientes.importar') }}">Regitrar clientes </a>
+                                    <a class="dropdown-item" href="{{ route('clientes.procesar') }}">Identificar clientes</a>
+                                </div>
+                            </li>
+                        @endhasanyrole
 
-                        <li class="nav-item dropdown {{ request()->routeIs('estados_de_cuenta.*') || request()->routeIs('users.*') ? 'active' : '' }}">
-                            <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
-                                data-bs-auto-close="outside" role="button" aria-expanded="false">
-                                <span class="nav-link-title">Estados de cuenta de clientes</span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-arrow">
-                                <a class="dropdown-item" href="{{ route('estados_de_cuenta.index') }}">Estados de cuenta</a>
-                                <a class="dropdown-item" href="{{ route('users.index') }}">Gestionar Clientes</a>
-                            </div>
-                        </li>
+                        @hasanyrole('admin|cobranza')
+                            <li
+                                class="nav-item dropdown {{ request()->routeIs('conciliacion_pagos.*') || request()->routeIs('importar-facturas-usuario-vista') ? 'active' : '' }}">
+                                <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
+                                    data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                    <span class="nav-link-title">Conciliación de pagos</span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-arrow">
+                                    <a class="dropdown-item" href="{{ route('conciliacion_pagos.index') }}">Conciliar </a>
+                                    <a class="dropdown-item" href="{{ route('importar-facturas-usuario-vista') }}">Importar
+                                        facturas</a>
+                                </div>
+                            </li>
+                        @endhasanyrole
+
+                        @hasanyrole('admin|cobranza|cedis-vendedor')
+                            <li
+                                class="nav-item dropdown {{ request()->routeIs('estados_de_cuenta.*') || request()->routeIs('users.*') ? 'active' : '' }}">
+                                <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown"
+                                    data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                    <span class="nav-link-title">Estados de cuenta de clientes</span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-arrow">
+                                    <a class="dropdown-item" href="{{ route('estados_de_cuenta.index') }}">Estados de
+                                        cuenta</a>
+                                    <a class="dropdown-item" href="{{ route('users.index') }}">Gestionar Clientes</a>
+                                </div>
+                            </li>
+                        @endhasanyrole
                     </ul>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
@@ -77,7 +86,8 @@
                             {{-- <a href="./settings.html" class="dropdown-item">Settings</a> --}}
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <a class="dropdown-item" onclick="event.preventDefault(); this.closest('form').submit();">Cerrar
+                                <a class="dropdown-item"
+                                    onclick="event.preventDefault(); this.closest('form').submit();">Cerrar
                                     sesión</a>
                             </form>
                         </div>
@@ -109,7 +119,8 @@
                                 <div class="dropdown-divider"></div>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <a class="dropdown-item" onclick="event.preventDefault(); this.closest('form').submit();">
+                                    <a class="dropdown-item"
+                                        onclick="event.preventDefault(); this.closest('form').submit();">
                                         Cerrar sesión
                                     </a>
                                 </form>

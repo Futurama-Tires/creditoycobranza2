@@ -58,40 +58,46 @@ Route::middleware(['auth', 'empleado'])->group(function () {
         return view('pages.prueba');
     });
 
-    Route::get('/clientes/importar', [ClienteController::class, 'showImportForm'])->name('clientes.importar');
-    Route::post('/clientes/importar', [ClienteController::class, 'import'])->name('clientes.importar.post');
-    Route::get('/clientes/procesar', function () {
-        return view('clientes.procesar'); // Ensure the Blade file is named `upload_excel.blade.php` and placed in the `resources/views` folder
-    })->name('clientes.procesar');
-    Route::post('/process-excel', [ExcelController::class, 'processExcel']);
+    Route::middleware(['auth', 'role:admin|cobranza|tesoreria'])->group(function () {
+        Route::get('/clientes/importar', [ClienteController::class, 'showImportForm'])->name('clientes.importar');
+        Route::post('/clientes/importar', [ClienteController::class, 'import'])->name('clientes.importar.post');
+        Route::get('/clientes/procesar', function () {
+            return view('clientes.procesar'); // Ensure the Blade file is named `upload_excel.blade.php` and placed in the `resources/views` folder
+        })->name('clientes.procesar');
+        Route::post('/process-excel', [ExcelController::class, 'processExcel']);
+    });
 
     //-----------------------------    CONCILIACION DE PAGOS RUTAS    ------------------------------------------------------------------
-    Route::resource('conciliacion_pagos', PagosController::class)->names('conciliacion_pagos');
-    Route::post('conciliacion_pagos/importarArchivos', [PagosController::class, 'importBancosAndNetsuiteReporte'])
-        ->name('conciliacion_pagos-importBancosAndNetsuiteReporte');
-    Route::get('exportar-conciliacion-pagos', [PagosController::class, 'exportConciliacionPagos'])->name('conciliacion-pagos-export');
-    Route::get('pendientes-exportar-conciliacion-pagos', [PagosController::class, 'depositosPendientesExportConciliacionPagos'])->name('pendientes-conciliacion-pagos-export');
-    Route::get('importar-facturas', [PagosController::class, 'importarFacturas'])->name('importar-facturas');
-    Route::post('importar-facturas-usuario', [PagosController::class, 'importarFacturasUsuario'])->name('importar-facturas-usuario');
-    Route::get('importar-facturas-usuario-vista', [PagosController::class, 'importarFacturasUsuarioVista'])->name('importar-facturas-usuario-vista');
+    Route::middleware(['auth', 'role:admin|cobranza'])->group(function () {
+        Route::resource('conciliacion_pagos', PagosController::class)->names('conciliacion_pagos');
+        Route::post('conciliacion_pagos/importarArchivos', [PagosController::class, 'importBancosAndNetsuiteReporte'])
+            ->name('conciliacion_pagos-importBancosAndNetsuiteReporte');
+        Route::get('exportar-conciliacion-pagos', [PagosController::class, 'exportConciliacionPagos'])->name('conciliacion-pagos-export');
+        Route::get('pendientes-exportar-conciliacion-pagos', [PagosController::class, 'depositosPendientesExportConciliacionPagos'])->name('pendientes-conciliacion-pagos-export');
+        Route::get('importar-facturas', [PagosController::class, 'importarFacturas'])->name('importar-facturas');
+        Route::post('importar-facturas-usuario', [PagosController::class, 'importarFacturasUsuario'])->name('importar-facturas-usuario');
+        Route::get('importar-facturas-usuario-vista', [PagosController::class, 'importarFacturasUsuarioVista'])->name('importar-facturas-usuario-vista');
+    });
 
     //-----------------------------    ESTADOS DE CUENTA    ------------------------------------------------------------------
-    Route::resource('estados_de_cuenta', EstadosDeCuentaController::class)->names('estados_de_cuenta');
-    Route::post('/netsuite/get-fac-pag-ndc', [EstadosDeCuentaController::class, 'getFacturasPagosNDC'])->name('getFacturasPagosNDC');
-    Route::get('/netsuite/get-customers', [EstadosDeCuentaController::class, 'getCustomers']);
-    Route::get('/load-customer-data', [EstadosDeCuentaController::class, 'loadCustomerData']);
-    Route::get('/estado-cuenta/descargar/{customer_code}', [EstadosDeCuentaController::class, 'downloadExcelEstadoDeCuenta'])
-        ->name('estado-cuenta.descargar');
-    Route::resource('users', UserController::class);
+    Route::middleware(['auth', 'role:admin|cobranza|cedis-vendedor'])->group(function () {
+        Route::resource('estados_de_cuenta', EstadosDeCuentaController::class)->names('estados_de_cuenta');
+        Route::post('/netsuite/get-fac-pag-ndc', [EstadosDeCuentaController::class, 'getFacturasPagosNDC'])->name('getFacturasPagosNDC');
+        Route::get('/netsuite/get-customers', [EstadosDeCuentaController::class, 'getCustomers']);
+        Route::get('/load-customer-data', [EstadosDeCuentaController::class, 'loadCustomerData']);
+        Route::get('/estado-cuenta/descargar/{customer_code}', [EstadosDeCuentaController::class, 'downloadExcelEstadoDeCuenta'])
+            ->name('estado-cuenta.descargar');
+        Route::resource('users', UserController::class);
+    });
 
-
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::get('/exportar-informacion', [EstadosDeCuentaController::class, 'downloadExcelCliente'])
-        ->middleware(['auth', 'verified'])
-        ->name('exportar-informacion');
+    Route::middleware(['auth', 'role:admin|cobranza|cedis-vendedor|tesoreria'])->group(function () {
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        Route::get('/exportar-informacion', [EstadosDeCuentaController::class, 'downloadExcelCliente'])
+            ->middleware(['auth', 'verified'])
+            ->name('exportar-informacion');
+    });
 });
 
 Route::get('/netsuite/get-fac-vista-cliente', [EstadosDeCuentaController::class, 'getFacturasVistaCliente'])
