@@ -74,7 +74,7 @@
                                                         <div class="row">
                                                             <div class="col-auto d-flex align-items-center pe-2">
                                                                 <span class="legend me-2 bg-primary"></span>
-                                                                <span>No Vencido</span>
+                                                                <span>Por vencer</span>
                                                                 <span
                                                                     class="d-none d-md-inline ms-2 text-secondary">{{$countNoVencidos}}</span>
 
@@ -187,7 +187,7 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
-                                                <div class="subheader">Subtotal no vencido</div>
+                                                <div class="subheader">Subtotal por vencer</div>
                                             </div>
                                             <div class="d-flex align-items-baseline">
                                                 <div class="h1 me-2 text-green">

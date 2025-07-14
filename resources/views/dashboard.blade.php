@@ -60,7 +60,7 @@
                 <div class="container-xl">
                     <div class="row  row-cards">
                         {{-- BBVA --}}
-                        <div class="col-md-4 col-12">
+                        <div class="col-lg-4 col-12">
                             <div class="card">
                                 <div class="card-status-start bg-orange"></div>
                                 <div class="card-stamp">
@@ -129,7 +129,7 @@
                         </div>
 
                         {{-- Conciliación pagos --}}
-                        <div class="col-md-4 col-12">
+                        <div class="col-lg-4 col-12">
                             <div class="card">
                                 <div class="card-status-start bg-green"></div>
                                 <div class="card-stamp">
@@ -200,7 +200,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 col-12">
+                        <div class="col-lg-4 col-12">
                             <div class="card">
                                 <div class="card-status-start bg-green"></div>
                                 <div class="card-stamp">
@@ -233,7 +233,7 @@
                                             <path d="M13 8l-4 4" />
                                             <path d="M13 8l-4 -4" />
                                         </svg>
-                                        <h3 class="card-title mb-0">Estados de cuenta</h3>
+                                        <h3 class="card-title mb-0">Estados de cuenta de clientes</h3>
                                     </a>
                                 </div>
                             </div>
