@@ -14,8 +14,8 @@ class EstadosCuenta extends Component
     public string $search = '';
     public array $suggestions = [];
 
-    public ?int   $clienteId = null;     // ID seleccionado
-    public $clienteNombre   = '';     // datos del cliente (altname, rfc …)
+    public ?int $clienteId = null;     // ID seleccionado
+    public $clienteNombre = '';     // datos del cliente (altname, rfc …)
     public $codigoCliente = null;
     //Datos de factuas
     public $facturasVencidas = 0;
@@ -69,7 +69,7 @@ class EstadosCuenta extends Component
         ORDER BY 
             altname ASC";
 
-        $raw =  $this->netsuite->suiteqlQuery($query);
+        $raw = $this->netsuite->suiteqlQuery($query);
         $this->suggestions = $raw['items'] ?? [];
     }
 
@@ -77,7 +77,7 @@ class EstadosCuenta extends Component
     public function selectCliente(int $id): void
     {
         $this->clienteId = $id;
-        $this->search    = '';          // limpia input
+        $this->search = '';          // limpia input
         $this->suggestions = [];
 
         #---- DATOS DE FACTURAS
@@ -86,13 +86,13 @@ class EstadosCuenta extends Component
         Log::info($facturas);
         // --- Métricas --------------------------------------------------------------
         [$vencidas, $noVencidas] = $this->contarFacturas($facturas['items'] ?? []);
-        $this->facturasVencidas    = $vencidas;
-        $this->facturasNoVencidas  = $noVencidas;
+        $this->facturasVencidas = $vencidas;
+        $this->facturasNoVencidas = $noVencidas;
         $this->porcentajesFacturas = $this->calcularPorcentajes($vencidas, $noVencidas);
 
         // ------- Saldos de facturas (Vencidas no vencidas)
         $statsService = new FacturaStatsService();
-        $resultado    = $statsService->calcular($facturas['items'] ?? []);
+        $resultado = $statsService->calcular($facturas['items'] ?? []);
 
         // 1. Mantén los valores numéricos para cálculos
         $this->saldosFacturasNumericos = $resultado['subtotales']; // Valores numéricos
@@ -215,16 +215,17 @@ class EstadosCuenta extends Component
         }
 
         return [
-            'porcentajeVencido'    => round(($vencidas     / $total) * 100, 2),
-            'porcentajeNoVencido'  => round(($noVencidas   / $total) * 100, 2),
+            'porcentajeVencido' => round(($vencidas / $total) * 100, 2),
+            'porcentajeNoVencido' => round(($noVencidas / $total) * 100, 2),
         ];
     }
 
     public function descargarEstadoCuenta()
     {
-        if (!$this->codigoCliente) return;
+        if (!$this->clienteId)
+            return;
 
-        return redirect()->route('estado-cuenta.descargar', ['customer_code' => $this->codigoCliente]);
+        return redirect()->route('estado-cuenta.descargar', ['id' => $this->clienteId]);
     }
 
     //Calcular días vencidos
@@ -369,7 +370,7 @@ class EstadosCuenta extends Component
 
         $suma = array_reduce(
             $resultado['items'] ?? [],
-            fn($carry, $item) => $carry + (float)($item['payment_amount_unused'] ?? 0),
+            fn($carry, $item) => $carry + (float) ($item['payment_amount_unused'] ?? 0),
             0
         );
 
