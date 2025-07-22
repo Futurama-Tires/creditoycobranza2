@@ -52,11 +52,12 @@
                                                         <div class="progress progress-separated mb-3">
                                                             <div class="progress-bar bg-primary" role="progressbar"
                                                                 style="width: 0%"
-                                                                data-width="{{ $porcentajes['no_vencido'] }}"
+                                                                data-width="{{ $porcentajes['no_vencido'] ?? ''}}"
                                                                 aria-label="No Vencido"></div>
 
                                                             <div class="progress-bar bg-danger" role="progressbar"
-                                                                style="width: 0%" data-width="{{ $porcentajes['vencido'] }}"
+                                                                style="width: 0%"
+                                                                data-width="{{ $porcentajes['vencido'] ?? ''}}"
                                                                 aria-label="Vencidas"></div>
                                                         </div>
                                                         <div class="row">
@@ -64,14 +65,14 @@
                                                                 <span class="legend me-2 bg-primary"></span>
                                                                 <span>Por vencer</span>
                                                                 <span
-                                                                    class="d-none d-md-inline ms-2 text-secondary">{{$countNoVencidos}}</span>
+                                                                    class="d-none d-md-inline ms-2 text-secondary">{{$countNoVencidos ?? ''}}</span>
 
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center px-2">
                                                                 <span class="legend me-2 bg-danger"></span>
                                                                 <span>Vencidas</span>
                                                                 <span
-                                                                    class="d-none d-md-inline ms-2 text-secondary">{{$countVencidos}}</span>
+                                                                    class="d-none d-md-inline ms-2 text-secondary">{{$countVencidos ?? ''}}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -95,7 +96,7 @@
                                                         d="M18 9c.852 0 1.297 .986 .783 1.623l-.076 .084l-6 6a1 1 0 0 1 -1.32 .083l-.094 -.083l-6 -6l-.083 -.094l-.054 -.077l-.054 -.096l-.017 -.036l-.027 -.067l-.032 -.108l-.01 -.053l-.01 -.06l-.004 -.057v-.118l.005 -.058l.009 -.06l.01 -.052l.032 -.108l.027 -.067l.07 -.132l.065 -.09l.073 -.081l.094 -.083l.077 -.054l.096 -.054l.036 -.017l.067 -.027l.108 -.032l.053 -.01l.06 -.01l.057 -.004l12.059 -.002z" />
                                                 </svg>
                                                 <div class="h1 mb-0 me-2 ">
-                                                    {{'$' . number_format($saldos['totalVencidas'], 2, '.', ',')}}
+                                                    {{'$' . number_format($saldos['totalVencidas'], 2, '.', ',') ?? ''}}
                                                 </div>
                                                 <div class="me-auto">
                                                     <span class="text-red d-inline-flex align-items-center lh-1">
@@ -126,7 +127,7 @@
                                                 </svg>
 
                                                 <div class="h1 mb-0 me-2 ">
-                                                    {{'$' . number_format($datosGraficaSaldosAFavor['totalGeneral'], 2, '.', ',')}}
+                                                    {{'$' . number_format($datosGraficaSaldosAFavor['totalGeneral'], 2, '.', ',') ?? ''}}
                                                 </div>
                                                 <div class="me-auto">
                                                     <span class="text-red d-inline-flex align-items-center lh-1">
@@ -138,11 +139,12 @@
                                                 <div class="progressbg">
                                                     <div class="progress progressbg-progress">
                                                         <div class="progress-bar bg-primary-lt"
-                                                            style="width: {{ $porcentaje['percentage'] }}%">
+                                                            style="width: {{ $porcentaje['percentage'] ?? ''}}%">
                                                         </div>
                                                     </div>
-                                                    <div class="progressbg-text">{{ $porcentaje['document_number'] }} </div>
-                                                    <div class="progressbg-value">{{ $porcentaje['percentage'] }}%</div>
+                                                    <div class="progressbg-text">{{ $porcentaje['document_number'] ?? '' }}
+                                                    </div>
+                                                    <div class="progressbg-value">{{ $porcentaje['percentage'] ?? ''}}%</div>
                                                 </div>
                                             @endforeach
 
@@ -164,7 +166,7 @@
                                             </div>
                                             <div class="d-flex align-items-baseline">
                                                 <div class="h1 me-2 text-yellow">
-                                                    {{'$' . number_format($saldos['totalVencidas'], 2, '.', ',')}}
+                                                    {{'$' . number_format($saldos['totalVencidas'], 2, '.', ',') ?? ''}}
                                                 </div>
                                             </div>
                                         </div>
@@ -179,7 +181,7 @@
                                             </div>
                                             <div class="d-flex align-items-baseline">
                                                 <div class="h1 me-2 text-green">
-                                                    {{'$' . number_format($saldos['totalNoVencidas'], 2, '.', ',')}}
+                                                    {{'$' . number_format($saldos['totalNoVencidas'], 2, '.', ',') ?? ''}}
                                                 </div>
                                             </div>
                                         </div>
@@ -194,7 +196,7 @@
                                             </div>
                                             <div class="d-flex align-items-baseline">
                                                 <div class="h1 me-2 text-primary">
-                                                    {{'$' . number_format($saldos['saldo_total'], 2, '.', ',')}}
+                                                    {{'$' . number_format($saldos['saldo_total'], 2, '.', ',') ?? ''}}
                                                 </div>
                                             </div>
                                         </div>
@@ -219,7 +221,7 @@
                                                 <div class="text-secondary">Más de 120 días</div>
                                             </td>
                                             <td class="text-end">
-                                                {{'$' . number_format($saldos['mayor_a_120'], 2, '.', ',')}}
+                                                {{'$' . number_format($saldos['mayor_a_120'], 2, '.', ',') ?? ''}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -228,7 +230,7 @@
                                                 <div class="text-secondary">De 91 a 120 días</div>
                                             </td>
                                             <td class="text-end">
-                                                {{'$' . number_format($saldos['91_120'], 2, '.', ',')}}
+                                                {{'$' . number_format($saldos['91_120'], 2, '.', ',') ?? ''}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -237,7 +239,7 @@
                                                 <div class="text-secondary">De 61 a 90 días</div>
                                             </td>
                                             <td class="text-end">
-                                                {{'$' . number_format($saldos['61_90'], 2, '.', ',')}}
+                                                {{'$' . number_format($saldos['61_90'], 2, '.', ',') ?? ''}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -246,7 +248,7 @@
                                                 <div class="text-secondary">De 31 a 60 días</div>
                                             </td>
                                             <td class="text-end">
-                                                {{'$' . number_format($saldos['31_60'], 2, '.', ',')}}
+                                                {{'$' . number_format($saldos['31_60'], 2, '.', ',') ?? ''}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -255,7 +257,7 @@
                                                 <div class="text-secondary">De 01 a 30 días</div>
                                             </td>
                                             <td class="text-end">
-                                                {{'$' . number_format($saldos['1_30'], 2, '.', ',')}}
+                                                {{'$' . number_format($saldos['1_30'], 2, '.', ',') ?? ''}}
                                             </td>
                                         </tr>
 
@@ -294,7 +296,7 @@
                                         <tbody>
                                             @foreach ($facturas as $factura)
                                                 <tr>
-                                                    <td>{{ $factura['transaction_date'] }}</td>
+                                                    <td>{{ $factura['transaction_date'] ?? ''}}</td>
 
                                                     <td><span class="text-secondary">
                                                             @if(Str::startsWith($factura['document_number'], 'FAC'))
@@ -308,18 +310,18 @@
                                                             tabindex="-1">{{ $factura['document_number'] }}</a>
                                                     </td>
 
-                                                    <td>{{ $factura['folio_sat'] }}</td>
+                                                    <td>{{ $factura['folio_sat'] ?? ''}}</td>
 
                                                     <td>{{ $factura['due_date'] ?? 'SIN FECHA' }}</td>
 
-                                                    <td>{{ $factura['dias_vencidos'] }}</td>
+                                                    <td>{{ $factura['dias_vencidos'] ?? ''}}</td>
 
-                                                    <td>{{ $factura['total_amount'] }}</td>
+                                                    <td>{{ $factura['total_amount'] ?? ''}}</td>
 
-                                                    <td>{{ $factura['amount_unpaid'] }}</td>
+                                                    <td>{{ $factura['amount_unpaid'] ?? ''}}</td>
 
                                                     <td>
-                                                        {{ $factura['currency_name'] }}
+                                                        {{ $factura['currency_name'] ?? '' }}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -376,12 +378,12 @@
                                                     <td>{{ $documento['due_date'] ?? 'Sin fecha' }}</td>
 
 
-                                                    <td>{{ $documento['total_amount'] }}</td>
+                                                    <td>{{ $documento['total_amount'] ?? '' }}</td>
 
-                                                    <td>{{ $documento['payment_amount_unused'] }}</td>
+                                                    <td>{{ $documento['payment_amount_unused'] ?? '' }}</td>
 
                                                     <td>
-                                                        {{ $documento['currency_name'] }}
+                                                        {{ $documento['currency_name'] ?? ''}}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -431,7 +433,7 @@
             labels: labels,
             datasets: [{
                 label: 'Saldo Vencido',
-                data: [{{$saldos['1_30']}}, {{$saldos['31_60']}}, {{$saldos['61_90']}}, {{$saldos['91_120']}}, {{$saldos['mayor_a_120']}}],
+                data: [{{$saldos['1_30'] ?? ''}}, {{$saldos['31_60'] ?? ''}}, {{$saldos['61_90'] ?? ''}}, {{$saldos['91_120'] ?? ''}}, {{$saldos['mayor_a_120'] ?? ''}}],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(255, 159, 64, 0.2)',

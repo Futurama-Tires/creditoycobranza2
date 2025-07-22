@@ -9,7 +9,6 @@ use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\PagosController;
 use App\Http\Controllers\EstadosDeCuenta\EstadosDeCuentaController;
 
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -97,6 +96,7 @@ Route::middleware(['auth', 'empleado'])->group(function () {
         Route::get('/exportar-informacion', [EstadosDeCuentaController::class, 'downloadExcelCliente'])
             ->middleware(['auth', 'verified'])
             ->name('exportar-informacion');
+        Route::post('/import-users', [UserController::class, 'import'])->name('users.import');
     });
 });
 
