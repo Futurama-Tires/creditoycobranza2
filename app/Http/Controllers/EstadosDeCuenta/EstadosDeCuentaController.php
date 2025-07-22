@@ -249,9 +249,9 @@ WHERE
     //seccion clientes
     public function getFacturasVistaCliente()
     {
-        $codigo_cliente = auth()->user()->codigo_cliente;
+        $clienteId = auth()->user()->clienteId;
         //mandar a llamar consulta de facturas pendientes
-        $datosFacturasPendientes = $this->getClienteFacturasPendientes($codigo_cliente);
+        $datosFacturasPendientes = $this->getClienteFacturasPendientes($clienteId);
         //contar las facturas vencidas
         $countVencidos = $this->getClientesVencido($datosFacturasPendientes);
         //contar las facturas no vencidas
@@ -263,7 +263,7 @@ WHERE
         //agregar los dias vencidos ya que hay facturas que no tienen el valor
         $facturas = $this->getClientesDiasVencidos($datosFacturasPendientes);
         //mandar a llamar consulta de saldos a favor
-        $datosSaldosAFavorPendientes = $this->getClientesPagosYNDCPendientes($codigo_cliente);
+        $datosSaldosAFavorPendientes = $this->getClientesPagosYNDCPendientes($clienteId);
         //filtrar saldos a favor
         $pagosYNDC = $this->getClientesPagosYNDCFiltrados($datosSaldosAFavorPendientes);
         //conseguir el total de notas de credito filtradas y los valores para la grafica
@@ -493,7 +493,7 @@ WHERE
 
 
     //Funcion para mandar a llamar los clientes por codigo
-    public function getClienteFacturasPendientes($codigo_cliente)
+    public function getClienteFacturasPendientes(int $id)
     {
         $query = "SELECT 
         BUILTIN.DF(Customer.altname) AS altname,
@@ -550,13 +550,13 @@ WHERE
         Customer.custentitycodigo_cliente IS NOT NULL AND 
         Customer.custentity_rfc IS NOT NULL AND
         transaction_SUB.foreignamountunpaid > 0 AND
-        Customer.custentitycodigo_cliente = '$codigo_cliente'
+        Customer.ID = $id
         ";
 
         return $this->querySuiteQL($query);
     }
 
-    public function getClientesPagosYNDCPendientes($codigo_cliente)
+    public function getClientesPagosYNDCPendientes(int $clienteId)
     {
 
         $query = "SELECT
@@ -607,7 +607,7 @@ WHERE
             Customer.altname IS NOT NULL AND
             transaction_SUB.transaction_type IN ('CustCred', 'CustPymt') AND
             transaction_SUB.unused_payment_criteria > 0 AND
-            Customer.custentitycodigo_cliente = '$codigo_cliente'
+            Customer.ID = $clienteId
         ";
 
         return $this->querySuiteQL($query);
@@ -615,10 +615,10 @@ WHERE
 
     public function downloadExcelCliente()
     {
-        $codigoCliente = auth()->user()->codigo_cliente;
+        $clienteId = auth()->user()->clienteId;
         $nombreCliente = auth()->user()->name . " " . auth()->user()->apellido;
 
-        return $this->generarEstadoCuentaExcel($codigoCliente, $nombreCliente);
+        return $this->generarEstadoCuentaExcel($clienteId, $nombreCliente);
     }
 
     public function downloadExcelEstadoDeCuenta($codigoCliente)
@@ -673,13 +673,13 @@ WHERE
         // Llenar tabla con facturas
         $row = 19;
         foreach ($facturas as $factura) {
-            $sheet->setCellValue("B{$row}", $factura['transaction_date']);
-            $sheet->setCellValue("C{$row}", $factura['document_number']);
-            $sheet->setCellValue("D{$row}", $factura['folio_sat']);
+            $sheet->setCellValue("B{$row}", $factura['transaction_date'] ?? '');
+            $sheet->setCellValue("C{$row}", $factura['document_number'] ?? '');
+            $sheet->setCellValue("D{$row}", $factura['folio_sat'] ?? '');
             $sheet->setCellValue("E{$row}", $factura['due_date'] ?? '');
             $sheet->setCellValue("F{$row}", $factura['dias_vencidos'] ?? '');
-            $sheet->setCellValue("G{$row}", $factura['total_amount']);
-            $sheet->setCellValue("H{$row}", $factura['amount_unpaid']);
+            $sheet->setCellValue("G{$row}", $factura['total_amount'] ?? '');
+            $sheet->setCellValue("H{$row}", $factura['amount_unpaid'] ?? '');
             $sheet->getStyle("B{$row}:H{$row}")
                 ->getBorders()
                 ->getAllBorders()
