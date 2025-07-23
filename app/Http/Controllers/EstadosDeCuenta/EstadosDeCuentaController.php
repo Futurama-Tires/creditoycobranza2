@@ -249,7 +249,8 @@ WHERE
     //seccion clientes
     public function getFacturasVistaCliente()
     {
-        $clienteId = auth()->user()->clienteId;
+        //NOTA IMPORTANTEEEEE codigo_cliente realmente es el id interno en netsuite
+        $clienteId = auth()->user()->codigo_cliente;
         //mandar a llamar consulta de facturas pendientes
         $datosFacturasPendientes = $this->getClienteFacturasPendientes($clienteId);
         //contar las facturas vencidas
