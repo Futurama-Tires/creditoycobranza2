@@ -249,7 +249,7 @@ WHERE
     //seccion clientes
     public function getFacturasVistaCliente()
     {
-        $clienteId = auth()->user()->clienteId;
+        $clienteId = auth()->user()->codigo_cliente;
         //mandar a llamar consulta de facturas pendientes
         $datosFacturasPendientes = $this->getClienteFacturasPendientes($clienteId);
         //contar las facturas vencidas
@@ -551,7 +551,7 @@ WHERE
         Customer.custentity_rfc IS NOT NULL AND
         transaction_SUB.foreignamountunpaid > 0 AND
         Customer.ID = $id
-        ";
+    ORDER BY transaction_SUB.trandate ASC";
 
         return $this->querySuiteQL($query);
     }

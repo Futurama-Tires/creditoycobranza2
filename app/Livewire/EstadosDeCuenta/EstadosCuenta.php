@@ -124,7 +124,9 @@ class EstadosCuenta extends Component
                     'document_number' => $f['document_number'] ?? null,
                     'folio_sat' => $f['folio_sat'] ?? null,
                     'due_date' => $f['due_date'] ?? null,
-                    'days_overdue' => $this->getClientesDiasVencidos($f['due_date']),
+                    'days_overdue' => isset($f['due_date']) && $f['due_date']
+                        ? $this->getClientesDiasVencidos($f['due_date'])
+                        : 0,
                     'total_amount' => $f['total_amount'] ?? null,
                     'amount_unpaid' => $f['amount_unpaid'] ?? null,
                     'currency_name' => $f['currency_name'] ?? null,
@@ -308,7 +310,7 @@ class EstadosCuenta extends Component
             Customer.custentity_rfc IS NOT NULL AND
             transaction_SUB.foreignamountunpaid > 0 AND
             Customer.ID =  $id
-            ";
+        ORDER BY transaction_SUB.trandate DESC";
 
         return $this->netsuite->suiteqlQuery($query);
     }
