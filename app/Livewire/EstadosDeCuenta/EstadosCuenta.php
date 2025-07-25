@@ -129,7 +129,7 @@ class EstadosCuenta extends Component
                         : 0,
                     'total_amount' => $f['total_amount'] ?? null,
                     'amount_unpaid' => $f['amount_unpaid'] ?? null,
-                    'currency_name' => $f['currency_name'] ?? null,
+                    'currency' => $f['currency'] ?? null,
                     'status' => $f['status'] ?? null,
                     'memo' => $f['memo'] ?? null,
                     'porcentaje_pagado' => $this->saldosFacturasNumericos['saldoTotal'] != 0
@@ -154,7 +154,7 @@ class EstadosCuenta extends Component
                     'folio_sat' => $p['folio_sat'] ?? null,
                     'total_amount' => $p['total_amount'],
                     'payment_amount_unused' => $p['payment_amount_unused'],
-                    'currency_name' => $p['currency_name'],
+                    'currency' => $p['currency'],
                     'status' => $p['status'],
 
                 ];
@@ -230,6 +230,24 @@ class EstadosCuenta extends Component
         return redirect()->route('estado-cuenta.descargar', ['id' => $this->clienteId]);
     }
 
+    public function descargarEstadoCuentaMXN()
+    {
+        if (!$this->clienteId)
+            return;
+
+        return redirect()->route('estado-cuenta-mxn.descargar', ['id' => $this->clienteId]);
+    }
+
+
+    public function descargarEstadoCuentaUSD()
+    {
+        if (!$this->clienteId)
+            return;
+
+        return redirect()->route('estado-cuenta-usd.descargar', ['id' => $this->clienteId]);
+    }
+
+
     //Calcular días vencidos
     protected function getClientesDiasVencidos($fecha)
     {
@@ -273,10 +291,10 @@ class EstadosCuenta extends Component
         transaction_SUB.daysoverduesearch AS days_overdue,
         Customer.creditlimit AS credit_limit,
         BUILTIN.DF(term.name) AS payment_terms,
-        BUILTIN.DF(currency.name) AS currency_name,
         BUILTIN.DF(Customer.email) AS email,
         BUILTIN.DF(Customer.phone) AS phone,
-        BUILTIN.DF(Customer.custentity5) AS additional_field
+        BUILTIN.DF(Customer.custentity5) AS additional_field,
+        transaction_SUB.currency AS currency
         FROM 
             Customer
         LEFT JOIN currency ON Customer.currency = currency.ID
@@ -293,7 +311,8 @@ class EstadosCuenta extends Component
                 t.duedate,
                 t.foreigntotal,
                 t.foreignamountunpaid,
-                t.daysoverduesearch
+                t.daysoverduesearch,
+                t.currency
             FROM 
                 transaction t
             LEFT JOIN TransactionStatus ts ON 
@@ -311,7 +330,7 @@ class EstadosCuenta extends Component
             transaction_SUB.foreignamountunpaid > 0 AND
             Customer.ID =  $id
         ORDER BY transaction_SUB.trandate DESC";
-
+        Log::info("Hola 2");
         return $this->netsuite->suiteqlQuery($query);
     }
 
@@ -329,10 +348,10 @@ class EstadosCuenta extends Component
         BUILTIN.DF(transaction_SUB.lastname) AS employee_lastname,
         BUILTIN.DF(transaction_SUB.firstname) AS employee_firstname,
         BUILTIN.DF(transaction_SUB.duedate) AS due_date,
-        BUILTIN.DF(currency.name) AS currency_name,
         transaction_SUB.foreigntotal AS total_amount,
         transaction_SUB.foreignpaymentamountunused AS payment_amount_unused,
-        transaction_SUB.foreignamountunpaid AS amount_unpaid
+        transaction_SUB.foreignamountunpaid AS amount_unpaid,
+        transaction_SUB.currency AS currency,
         FROM
             Customer
         LEFT JOIN currency ON Customer.currency = currency.ID
@@ -350,7 +369,8 @@ class EstadosCuenta extends Component
                 t.foreignpaymentamountunused,
                 t.foreignamountunpaid,
                 t.TYPE AS transaction_type,
-                t.foreignpaymentamountunused AS unused_payment_criteria
+                t.foreignpaymentamountunused AS unused_payment_criteria,
+                t.currency
             FROM
                 transaction t
             LEFT JOIN employee e ON t.employee = e.ID
@@ -369,7 +389,6 @@ class EstadosCuenta extends Component
                 Customer.ID =  $id
                 ";
         $resultado = $this->netsuite->suiteqlQuery($query);
-
         $suma = array_reduce(
             $resultado['items'] ?? [],
             fn($carry, $item) => $carry + (float) ($item['payment_amount_unused'] ?? 0),

@@ -93,10 +93,10 @@ class EstadosDeCuentaController extends Controller
         transaction_SUB.daysoverduesearch AS days_overdue,
         Customer.creditlimit AS credit_limit,
         BUILTIN.DF(term.name) AS payment_terms,
-        BUILTIN.DF(currency.name) AS currency_name,
         BUILTIN.DF(Customer.email) AS email,
         BUILTIN.DF(Customer.phone) AS phone,
         BUILTIN.DF(Customer.custentity5) AS additional_field
+        transaction_SUB.currency AS currency
     FROM 
         Customer
     LEFT JOIN currency ON Customer.currency = currency.ID
@@ -113,7 +113,8 @@ class EstadosDeCuentaController extends Controller
             t.duedate,
             t.foreigntotal,
             t.foreignamountunpaid,
-            t.daysoverduesearch
+            t.daysoverduesearch,
+            t.currency
         FROM 
             transaction t
         LEFT JOIN TransactionStatus ts ON 
@@ -493,6 +494,139 @@ WHERE
 
 
     //Funcion para mandar a llamar los clientes por codigo
+    //Funcion para el excel
+    public function getClienteFacturasPendientesMXN(int $id)
+    {
+        $query = "SELECT 
+        BUILTIN.DF(Customer.altname) AS altname,
+        BUILTIN.DF(Customer.custentitycodigo_cliente) AS customer_code,
+        BUILTIN.DF(Customer.custentity_rfc) AS rfc,
+        BUILTIN.DF(transaction_SUB.fullname) AS status,
+        BUILTIN.DF(transaction_SUB.trandate) AS transaction_date,
+        BUILTIN.DF(transaction_SUB.typebaseddocumentnumber) AS document_number,
+        BUILTIN.DF(transaction_SUB.custbody_foliosat) AS folio_sat,
+        BUILTIN.DF(employee.lastname) AS salesrep_lastname,
+        BUILTIN.DF(employee.firstname) AS salesrep_firstname,
+        BUILTIN.DF(CUSTOMLIST423.name) AS customer_type,
+        BUILTIN.DF(transaction_SUB.memo) AS memo,
+        BUILTIN.DF(transaction_SUB.custbody_nso_notas_de_usuario) AS user_notes,
+        BUILTIN.DF(transaction_SUB.duedate) AS due_date,
+        transaction_SUB.foreigntotal AS total_amount,
+        transaction_SUB.foreignamountunpaid AS amount_unpaid,
+        transaction_SUB.daysoverduesearch AS days_overdue,
+        Customer.creditlimit AS credit_limit,
+        BUILTIN.DF(term.name) AS payment_terms,
+        BUILTIN.DF(Customer.email) AS email,
+        BUILTIN.DF(Customer.phone) AS phone,
+        BUILTIN.DF(Customer.custentity5) AS additional_field,
+        transaction_SUB.currency AS currency
+    FROM 
+        Customer
+    LEFT JOIN currency ON Customer.currency = currency.ID
+    LEFT JOIN CUSTOMLIST423 ON Customer.custentity4 = CUSTOMLIST423.ID
+    LEFT JOIN (
+        SELECT 
+            t.entity,
+            ts.fullname,
+            t.trandate,
+            t.typebaseddocumentnumber,
+            t.custbody_foliosat,
+            t.memo,
+            t.custbody_nso_notas_de_usuario,
+            t.duedate,
+            t.foreigntotal,
+            t.foreignamountunpaid,
+            t.daysoverduesearch,
+            t.currency
+        FROM 
+            transaction t
+        LEFT JOIN TransactionStatus ts ON 
+            t.TYPE = ts.trantype AND 
+            t.status = ts.ID AND 
+            t.customtype = ts.trancustomtype
+    ) transaction_SUB ON Customer.ID = transaction_SUB.entity
+    LEFT JOIN employee ON Customer.salesrep = employee.ID
+    LEFT JOIN term ON Customer.terms = term.ID
+    WHERE 
+        employee.subsidiary IN ('3') AND 
+        Customer.altname IS NOT NULL AND 
+        Customer.custentitycodigo_cliente IS NOT NULL AND 
+        Customer.custentity_rfc IS NOT NULL AND
+        transaction_SUB.foreignamountunpaid > 0 AND
+        transaction_SUB.currency = '1' AND
+        Customer.ID = $id
+    ORDER BY transaction_SUB.currency ASC, transaction_SUB.trandate ASC";
+
+        Log::info("hola");
+        return $this->querySuiteQL($query);
+    }
+
+    public function getClienteFacturasPendientesUSD(int $id)
+    {
+        $query = "SELECT 
+        BUILTIN.DF(Customer.altname) AS altname,
+        BUILTIN.DF(Customer.custentitycodigo_cliente) AS customer_code,
+        BUILTIN.DF(Customer.custentity_rfc) AS rfc,
+        BUILTIN.DF(transaction_SUB.fullname) AS status,
+        BUILTIN.DF(transaction_SUB.trandate) AS transaction_date,
+        BUILTIN.DF(transaction_SUB.typebaseddocumentnumber) AS document_number,
+        BUILTIN.DF(transaction_SUB.custbody_foliosat) AS folio_sat,
+        BUILTIN.DF(employee.lastname) AS salesrep_lastname,
+        BUILTIN.DF(employee.firstname) AS salesrep_firstname,
+        BUILTIN.DF(CUSTOMLIST423.name) AS customer_type,
+        BUILTIN.DF(transaction_SUB.memo) AS memo,
+        BUILTIN.DF(transaction_SUB.custbody_nso_notas_de_usuario) AS user_notes,
+        BUILTIN.DF(transaction_SUB.duedate) AS due_date,
+        transaction_SUB.foreigntotal AS total_amount,
+        transaction_SUB.foreignamountunpaid AS amount_unpaid,
+        transaction_SUB.daysoverduesearch AS days_overdue,
+        Customer.creditlimit AS credit_limit,
+        BUILTIN.DF(term.name) AS payment_terms,
+        BUILTIN.DF(Customer.email) AS email,
+        BUILTIN.DF(Customer.phone) AS phone,
+        BUILTIN.DF(Customer.custentity5) AS additional_field,
+        transaction_SUB.currency AS currency
+    FROM 
+        Customer
+    LEFT JOIN currency ON Customer.currency = currency.ID
+    LEFT JOIN CUSTOMLIST423 ON Customer.custentity4 = CUSTOMLIST423.ID
+    LEFT JOIN (
+        SELECT 
+            t.entity,
+            ts.fullname,
+            t.trandate,
+            t.typebaseddocumentnumber,
+            t.custbody_foliosat,
+            t.memo,
+            t.custbody_nso_notas_de_usuario,
+            t.duedate,
+            t.foreigntotal,
+            t.foreignamountunpaid,
+            t.daysoverduesearch,
+            t.currency
+        FROM 
+            transaction t
+        LEFT JOIN TransactionStatus ts ON 
+            t.TYPE = ts.trantype AND 
+            t.status = ts.ID AND 
+            t.customtype = ts.trancustomtype
+    ) transaction_SUB ON Customer.ID = transaction_SUB.entity
+    LEFT JOIN employee ON Customer.salesrep = employee.ID
+    LEFT JOIN term ON Customer.terms = term.ID
+    WHERE 
+        employee.subsidiary IN ('3') AND 
+        Customer.altname IS NOT NULL AND 
+        Customer.custentitycodigo_cliente IS NOT NULL AND 
+        Customer.custentity_rfc IS NOT NULL AND
+        transaction_SUB.foreignamountunpaid > 0 AND
+        transaction_SUB.currency = '2' AND
+        Customer.ID = $id
+    ORDER BY transaction_SUB.currency ASC, transaction_SUB.trandate ASC";
+
+        return $this->querySuiteQL($query);
+    }
+
+
     public function getClienteFacturasPendientes(int $id)
     {
         $query = "SELECT 
@@ -514,10 +648,10 @@ WHERE
         transaction_SUB.daysoverduesearch AS days_overdue,
         Customer.creditlimit AS credit_limit,
         BUILTIN.DF(term.name) AS payment_terms,
-        BUILTIN.DF(currency.name) AS currency_name,
         BUILTIN.DF(Customer.email) AS email,
         BUILTIN.DF(Customer.phone) AS phone,
-        BUILTIN.DF(Customer.custentity5) AS additional_field
+        BUILTIN.DF(Customer.custentity5) AS additional_field,
+        transaction_SUB.currency AS currency
     FROM 
         Customer
     LEFT JOIN currency ON Customer.currency = currency.ID
@@ -534,7 +668,8 @@ WHERE
             t.duedate,
             t.foreigntotal,
             t.foreignamountunpaid,
-            t.daysoverduesearch
+            t.daysoverduesearch,
+            t.currency
         FROM 
             transaction t
         LEFT JOIN TransactionStatus ts ON 
@@ -551,8 +686,9 @@ WHERE
         Customer.custentity_rfc IS NOT NULL AND
         transaction_SUB.foreignamountunpaid > 0 AND
         Customer.ID = $id
-    ORDER BY transaction_SUB.trandate ASC";
+    ORDER BY transaction_SUB.currency ASC, transaction_SUB.trandate ASC";
 
+        Log::info("hola");
         return $this->querySuiteQL($query);
     }
 
@@ -571,10 +707,10 @@ WHERE
         BUILTIN.DF(transaction_SUB.lastname) AS employee_lastname,
         BUILTIN.DF(transaction_SUB.firstname) AS employee_firstname,
         BUILTIN.DF(transaction_SUB.duedate) AS due_date,
-        BUILTIN.DF(currency.name) AS currency_name,
         transaction_SUB.foreigntotal AS total_amount,
         transaction_SUB.foreignpaymentamountunused AS payment_amount_unused,
-        transaction_SUB.foreignamountunpaid AS amount_unpaid
+        transaction_SUB.foreignamountunpaid AS amount_unpaid,
+        transaction_SUB.currency AS currency
         FROM
             Customer
         LEFT JOIN currency ON Customer.currency = currency.ID
@@ -592,7 +728,8 @@ WHERE
                 t.foreignpaymentamountunused,
                 t.foreignamountunpaid,
                 t.TYPE AS transaction_type,
-                t.foreignpaymentamountunused AS unused_payment_criteria
+                t.foreignpaymentamountunused AS unused_payment_criteria,
+                t.currency
             FROM
                 transaction t
             LEFT JOIN employee e ON t.employee = e.ID
@@ -610,6 +747,7 @@ WHERE
             Customer.ID = $clienteId
         ";
 
+        //dd($query);
         return $this->querySuiteQL($query);
     }
 
@@ -624,6 +762,22 @@ WHERE
     public function downloadExcelEstadoDeCuenta($codigoCliente)
     {
         $datosFacturasPendientes = $this->getClienteFacturasPendientes($codigoCliente);
+        $nombreCliente = $datosFacturasPendientes['items'][0]['altname'] ?? 'Cliente';
+
+        return $this->generarEstadoCuentaExcel($codigoCliente, $nombreCliente, $datosFacturasPendientes);
+    }
+
+    public function downloadExcelEstadoDeCuentaMXN($codigoCliente)
+    {
+        $datosFacturasPendientes = $this->getClienteFacturasPendientesMXN($codigoCliente);
+        $nombreCliente = $datosFacturasPendientes['items'][0]['altname'] ?? 'Cliente';
+
+        return $this->generarEstadoCuentaExcel($codigoCliente, $nombreCliente, $datosFacturasPendientes);
+    }
+
+    public function downloadExcelEstadoDeCuentaUSD($codigoCliente)
+    {
+        $datosFacturasPendientes = $this->getClienteFacturasPendientesUSD($codigoCliente);
         $nombreCliente = $datosFacturasPendientes['items'][0]['altname'] ?? 'Cliente';
 
         return $this->generarEstadoCuentaExcel($codigoCliente, $nombreCliente, $datosFacturasPendientes);
@@ -680,11 +834,175 @@ WHERE
             $sheet->setCellValue("F{$row}", $factura['dias_vencidos'] ?? '');
             $sheet->setCellValue("G{$row}", $factura['total_amount'] ?? '');
             $sheet->setCellValue("H{$row}", $factura['amount_unpaid'] ?? '');
-            $sheet->getStyle("B{$row}:H{$row}")
+            if ($factura['currency'] == 1) {
+                $sheet->setCellValue("I{$row}", "MXN" ?? '');
+            } elseif ($factura['currency'] == 2) {
+                $sheet->setCellValue("I{$row}", "USD" ?? '');
+            } else {
+                $sheet->setCellValue("I{$row}", "ERROR" ?? '');
+            }
+
+            $sheet->getStyle("B{$row}:I{$row}")
                 ->getBorders()
                 ->getAllBorders()
                 ->setBorderStyle(Border::BORDER_THIN);
-            $sheet->getStyle("G{$row}:H{$row}")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_ACCOUNTING_USD);
+            $sheet->getStyle("G{$row}:I{$row}")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_ACCOUNTING_USD);
+            $row++;
+        }
+
+        // Crear nombre del archivo
+        $fecha = now()->format('d-m-Y');
+        $nombreArchivo = "ESTADO DE CUENTA {$nombreCliente} {$fecha}.xlsx";
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $nombreArchivo);
+    }
+
+    private function generarEstadoCuentaExcelMXN(string $codigoCliente, string $nombreCliente, $datosFacturasPendientes = null)
+    {
+        $templatePath = storage_path('app/Templates/plantilla_estado_de_cuenta_cliente.xlsx');
+        $spreadsheet = IOFactory::load($templatePath);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $drawing = new Drawing();
+        $drawing->setName('Logo');
+        $drawing->setDescription('Company Logo');
+        $drawing->setPath(storage_path('app/public/logo.png'));
+        $drawing->setCoordinates('B1');
+        $drawing->setHeight(140);
+        $drawing->setWorksheet($sheet);
+
+        // Reutiliza datos si vienen del controlador externo o haz la consulta si no
+        $datosFacturasPendientes = $datosFacturasPendientes ?? $this->getClienteFacturasPendientesMXN($codigoCliente);
+        $countVencidos = $this->getClientesVencido($datosFacturasPendientes);
+        $countNoVencidos = $this->getClientesNoVencido($datosFacturasPendientes);
+        $porcentajes = [$this->getClientesPorcentajes($countVencidos, $countNoVencidos)];
+        $saldos = $this->rangosYTotales($datosFacturasPendientes);
+        $facturas = $this->getClientesDiasVencidos($datosFacturasPendientes);
+
+        // Insertar datos en celdas
+        $sheet->setCellValue('C10', $saldos['mayor_a_120']);
+        $sheet->setCellValue('C11', $saldos['91_120']);
+        $sheet->setCellValue('C12', $saldos['61_90']);
+        $sheet->setCellValue('C13', $saldos['31_60']);
+        $sheet->setCellValue('C14', $saldos['1_30']);
+        $sheet->setCellValue('G12', $saldos['totalVencidas']);
+        $sheet->setCellValue('G13', $saldos['totalNoVencidas']);
+        $sheet->setCellValue('G14', $saldos['saldo_total']);
+        $sheet->setCellValue('E6', $nombreCliente . " - " . $codigoCliente);
+        $sheet->getStyle('E6')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
+        $sheet->getStyle("C10:C14")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_ACCOUNTING_USD);
+        $sheet->getStyle("G12:G14")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_ACCOUNTING_USD);
+
+        //Autoajuste de celdas
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+
+        // Llenar tabla con facturas
+        $row = 19;
+        foreach ($facturas as $factura) {
+            $sheet->setCellValue("B{$row}", $factura['transaction_date'] ?? '');
+            $sheet->setCellValue("C{$row}", $factura['document_number'] ?? '');
+            $sheet->setCellValue("D{$row}", $factura['folio_sat'] ?? '');
+            $sheet->setCellValue("E{$row}", $factura['due_date'] ?? '');
+            $sheet->setCellValue("F{$row}", $factura['dias_vencidos'] ?? '');
+            $sheet->setCellValue("G{$row}", $factura['total_amount'] ?? '');
+            $sheet->setCellValue("H{$row}", $factura['amount_unpaid'] ?? '');
+            if ($factura['currency'] == 1) {
+                $sheet->setCellValue("I{$row}", "MXN" ?? '');
+            } elseif ($factura['currency'] == 2) {
+                $sheet->setCellValue("I{$row}", "USD" ?? '');
+            } else {
+                $sheet->setCellValue("I{$row}", "ERROR" ?? '');
+            }
+
+            $sheet->getStyle("B{$row}:I{$row}")
+                ->getBorders()
+                ->getAllBorders()
+                ->setBorderStyle(Border::BORDER_THIN);
+            $sheet->getStyle("G{$row}:I{$row}")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_ACCOUNTING_USD);
+            $row++;
+        }
+
+        // Crear nombre del archivo
+        $fecha = now()->format('d-m-Y');
+        $nombreArchivo = "ESTADO DE CUENTA {$nombreCliente} {$fecha}.xlsx";
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $nombreArchivo);
+    }
+
+    private function generarEstadoCuentaExcelUSD(string $codigoCliente, string $nombreCliente, $datosFacturasPendientes = null)
+    {
+        $templatePath = storage_path('app/Templates/plantilla_estado_de_cuenta_cliente.xlsx');
+        $spreadsheet = IOFactory::load($templatePath);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $drawing = new Drawing();
+        $drawing->setName('Logo');
+        $drawing->setDescription('Company Logo');
+        $drawing->setPath(storage_path('app/public/logo.png'));
+        $drawing->setCoordinates('B1');
+        $drawing->setHeight(140);
+        $drawing->setWorksheet($sheet);
+
+        // Reutiliza datos si vienen del controlador externo o haz la consulta si no
+        $datosFacturasPendientes = $datosFacturasPendientes ?? $this->getClienteFacturasPendientesUSD($codigoCliente);
+        $countVencidos = $this->getClientesVencido($datosFacturasPendientes);
+        $countNoVencidos = $this->getClientesNoVencido($datosFacturasPendientes);
+        $porcentajes = [$this->getClientesPorcentajes($countVencidos, $countNoVencidos)];
+        $saldos = $this->rangosYTotales($datosFacturasPendientes);
+        $facturas = $this->getClientesDiasVencidos($datosFacturasPendientes);
+
+        // Insertar datos en celdas
+        $sheet->setCellValue('C10', $saldos['mayor_a_120']);
+        $sheet->setCellValue('C11', $saldos['91_120']);
+        $sheet->setCellValue('C12', $saldos['61_90']);
+        $sheet->setCellValue('C13', $saldos['31_60']);
+        $sheet->setCellValue('C14', $saldos['1_30']);
+        $sheet->setCellValue('G12', $saldos['totalVencidas']);
+        $sheet->setCellValue('G13', $saldos['totalNoVencidas']);
+        $sheet->setCellValue('G14', $saldos['saldo_total']);
+        $sheet->setCellValue('E6', $nombreCliente . " - " . $codigoCliente);
+        $sheet->getStyle('E6')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
+        $sheet->getStyle("C10:C14")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_ACCOUNTING_USD);
+        $sheet->getStyle("G12:G14")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_ACCOUNTING_USD);
+
+        //Autoajuste de celdas
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+
+        // Llenar tabla con facturas
+        $row = 19;
+        foreach ($facturas as $factura) {
+            $sheet->setCellValue("B{$row}", $factura['transaction_date'] ?? '');
+            $sheet->setCellValue("C{$row}", $factura['document_number'] ?? '');
+            $sheet->setCellValue("D{$row}", $factura['folio_sat'] ?? '');
+            $sheet->setCellValue("E{$row}", $factura['due_date'] ?? '');
+            $sheet->setCellValue("F{$row}", $factura['dias_vencidos'] ?? '');
+            $sheet->setCellValue("G{$row}", $factura['total_amount'] ?? '');
+            $sheet->setCellValue("H{$row}", $factura['amount_unpaid'] ?? '');
+            if ($factura['currency'] == 1) {
+                $sheet->setCellValue("I{$row}", "MXN" ?? '');
+            } elseif ($factura['currency'] == 2) {
+                $sheet->setCellValue("I{$row}", "USD" ?? '');
+            } else {
+                $sheet->setCellValue("I{$row}", "ERROR" ?? '');
+            }
+
+            $sheet->getStyle("B{$row}:I{$row}")
+                ->getBorders()
+                ->getAllBorders()
+                ->setBorderStyle(Border::BORDER_THIN);
+            $sheet->getStyle("G{$row}:I{$row}")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_ACCOUNTING_USD);
             $row++;
         }
 

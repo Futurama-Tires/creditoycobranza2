@@ -321,7 +321,13 @@
                                                     <td>{{ $factura['amount_unpaid'] ?? ''}}</td>
 
                                                     <td>
-                                                        {{ $factura['currency_name'] ?? '' }}
+                                                        @if($factura['currency'] == '1')
+                                                            MXN
+                                                        @elseif($factura['currency'] == '2')
+                                                            USD
+                                                        @else
+                                                            Moneda no identificada
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -383,7 +389,13 @@
                                                     <td>{{ $documento['payment_amount_unused'] ?? '' }}</td>
 
                                                     <td>
-                                                        {{ $documento['currency_name'] ?? ''}}
+                                                        @if($documento['currency'] == '1')
+                                                            MXN
+                                                        @elseif($documento['currency'] == '2')
+                                                            USD
+                                                        @else
+                                                            Moneda no identificada
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach

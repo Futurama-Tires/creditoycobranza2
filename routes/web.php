@@ -85,6 +85,11 @@ Route::middleware(['auth', 'empleado'])->group(function () {
     Route::get('/load-customer-data', [EstadosDeCuentaController::class, 'loadCustomerData']);
     Route::get('/estado-cuenta/descargar/{id}', [EstadosDeCuentaController::class, 'downloadExcelEstadoDeCuenta'])
         ->name('estado-cuenta.descargar');
+    Route::get('/estado-cuenta/descargar-mxn/{id}', [EstadosDeCuentaController::class, 'downloadExcelEstadoDeCuentaMXN'])
+        ->name('estado-cuenta-mxn.descargar');
+    Route::get('/estado-cuenta/descargar-usd/{id}', [EstadosDeCuentaController::class, 'downloadExcelEstadoDeCuentaUSD'])
+        ->name('estado-cuenta-usd.descargar');
+
     Route::resource('users', UserController::class);
 
     Route::middleware(['auth', 'role:admin|cobranza|cedis-vendedor|tesoreria'])->group(function () {

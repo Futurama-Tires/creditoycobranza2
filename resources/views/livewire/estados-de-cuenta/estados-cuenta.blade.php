@@ -31,108 +31,149 @@
                         <div class="col-auto ms-auto d-print-none">
                             <div class="d-flex">
 
-                                <a href="#" wire:click="descargarEstadoCuenta"
-                                    class="btn btn-primary me-2 d-none d-md-inline-block {{ $codigoCliente ? '' : 'disabled' }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-download">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-                                        <path d="M7 11l5 5l5 -5" />
-                                        <path d="M12 4l0 12" />
-                                    </svg>
-                                    Descargar estado de cuenta
-                                </a>
 
-                                <a href="#" wire:click="descargarEstadoCuenta"
-                                    class="btn btn-primary me-1 d-md-none btn-icon {{ $codigoCliente ? '' : 'disabled' }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-download">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-                                        <path d="M7 11l5 5l5 -5" />
-                                        <path d="M12 4l0 12" />
-                                    </svg>
-                                </a>
 
-                                <div class="position-relative w-100 ">
-                                    <div class="input-icon">
-                                        <input type="text" class="form-control w-100" placeholder="Buscar cliente…"
-                                            wire:model.live.debounce.1000ms="search">
-                                        <span class="input-icon-addon">
 
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="icon icon-1">
-                                                <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
-                                                <path d="M21 21l-6 -6"></path>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                    @if ($search)
-                                        {{-- Contenedor flotante en la misma posición del input --}}
-                                        <div class="dropdown-menu show w-100 shadow-none p-0"
-                                            style="max-height:18rem;overflow-y:auto;z-index:1000;">
+                                <div class="container">
+                                    <div class="row mb-3">
+                                        <div class="position-relative w-100 ">
+                                            <div class="input-icon">
+                                                <input type="text" class="form-control w-100"
+                                                    placeholder="Buscar cliente…"
+                                                    wire:model.live.debounce.1000ms="search">
+                                                <span class="input-icon-addon">
 
-                                            @if (count($suggestions) > 0)
-                                                @foreach ($suggestions as $c)
-                                                    {{-- Cada fila: enlace clicable que actúa como item --}}
-                                                    <a href="#" wire:loading.class="disabled"
-                                                        wire:click.prevent="selectCliente({{ $c['customer_id'] }})"
-                                                        class="dropdown-item d-flex align-items-center gap-2 py-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="icon icon-1">
+                                                        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+                                                        <path d="M21 21l-6 -6"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            @if ($search)
+                                                {{-- Contenedor flotante en la misma posición del input --}}
+                                                <div class="dropdown-menu show w-100 shadow-none p-0"
+                                                    style="max-height:18rem;overflow-y:auto;z-index:1000;">
 
-                                                        {{-- Avatar (iniciales) con color aleatorio según ID --}}
-                                                        <span
-                                                            class="avatar avatar-sm rounded d-inline-flex align-items-center justify-content-center
-                                                        {{ [
-                                                            'bg-primary-lt',
-                                                            'bg-success-lt',
-                                                            'bg-info-lt',
-                                                            'bg-warning-lt',
-                                                            'bg-danger-lt',
-                                                            'bg-secondary-lt',
-                                                            'bg-dark-lt',
-                                                        ][$c['customer_id'] % 7] }}
-                                                        text-white">
-                                                            {{ Str::substr($c['altname'], 0, 2) }}
-                                                        </span>
+                                                    @if (count($suggestions) > 0)
+                                                        @foreach ($suggestions as $c)
+                                                                                                {{-- Cada fila: enlace clicable que actúa como item --}}
+                                                                                                <a href="#" wire:loading.class="disabled"
+                                                                                                    wire:click.prevent="selectCliente({{ $c['customer_id'] }})"
+                                                                                                    class="dropdown-item d-flex align-items-center gap-2 py-2">
 
-                                                        {{-- Texto (nombre + subtexto) --}}
-                                                        <div class="flex-fill lh-sm">
-                                                            <div class="fw-bold">{{ $c['altname'] }}</div>
-                                                            <small
-                                                                class="text-secondary">ID #{{ $c['customer_id'] }}</small>
+                                                                                                    {{-- Avatar (iniciales) con color aleatorio según ID --}}
+                                                                                                    <span
+                                                                                                        class="avatar avatar-sm rounded d-inline-flex align-items-center justify-content-center
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ [
+                                                                'bg-primary-lt',
+                                                                'bg-success-lt',
+                                                                'bg-info-lt',
+                                                                'bg-warning-lt',
+                                                                'bg-danger-lt',
+                                                                'bg-secondary-lt',
+                                                                'bg-dark-lt',
+                                                            ][$c['customer_id'] % 7] }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                text-white">
+                                                                                                        {{ Str::substr($c['altname'], 0, 2) }}
+                                                                                                    </span>
+
+                                                                                                    {{-- Texto (nombre + subtexto) --}}
+                                                                                                    <div class="flex-fill lh-sm">
+                                                                                                        <div class="fw-bold">{{ $c['altname'] }}</div>
+                                                                                                        <small
+                                                                                                            class="text-secondary">ID #{{ $c['customer_id'] }}</small>
+                                                                                                    </div>
+
+                                                                                                    {{-- Indicador de estado --}}
+                                                                                                    <span class="status-dot status-dot-animated bg-green"></span>
+                                                                                                </a>
+                                                        @endforeach
+                                                    @else
+                                                        {{-- Mensaje si no se encontraron resultados --}}
+                                                        <div class="dropdown-item text-center text-muted py-3">
+                                                            <div flex-fill lh-sm>
+                                                                <div class="fw-semibold">Cliente no encontrado</div>
+                                                                <small>Intenta con otro nombre</small>
+                                                            </div>
                                                         </div>
+                                                    @endif
 
-                                                        {{-- Indicador de estado --}}
-                                                        <span class="status-dot status-dot-animated bg-green"></span>
-                                                    </a>
-                                                @endforeach
-                                            @else
-                                                {{-- Mensaje si no se encontraron resultados --}}
-                                                <div class="dropdown-item text-center text-muted py-3">
-                                                    <div flex-fill lh-sm>
-                                                        <div class="fw-semibold">Cliente no encontrado</div>
-                                                        <small>Intenta con otro nombre</small>
+                                                    {{-- Botón para cerrar el buscador --}}
+                                                    <div class="dropdown-item text-center border-top">
+                                                        <button wire:click="$set('search', '')"
+                                                            class="btn btn-sm btn-outline-secondary">
+                                                            Cerrar
+                                                        </button>
                                                     </div>
                                                 </div>
                                             @endif
-
-                                            {{-- Botón para cerrar el buscador --}}
-                                            <div class="dropdown-item text-center border-top">
-                                                <button wire:click="$set('search', '')"
-                                                    class="btn btn-sm btn-outline-secondary">
-                                                    Cerrar
-                                                </button>
-                                            </div>
                                         </div>
-                                    @endif
-                                </div>
+                                    </div>
 
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <a href="#" wire:click="descargarEstadoCuentaMXN"
+                                                class="btn btn-primary me-2 d-none d-md-inline-block {{ $codigoCliente ? '' : 'disabled' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-download">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                                    <path d="M7 11l5 5l5 -5" />
+                                                    <path d="M12 4l0 12" />
+                                                </svg>
+                                                Descargar estado de cuenta (MXN)
+                                            </a>
+
+                                            <a href="#" wire:click="descargarEstadoCuentaMXN"
+                                                class="btn btn-primary me-1 d-md-none btn-icon {{ $codigoCliente ? '' : 'disabled' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-download">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                                    <path d="M7 11l5 5l5 -5" />
+                                                    <path d="M12 4l0 12" />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                        <div class="col">
+
+
+                                            <a href="#" wire:click="descargarEstadoCuentaUSD"
+                                                class="btn btn-pink me-2 d-none d-md-inline-block {{ $codigoCliente ? '' : 'disabled' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-download">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                                    <path d="M7 11l5 5l5 -5" />
+                                                    <path d="M12 4l0 12" />
+                                                </svg>
+                                                Descargar estado de cuenta (USD)
+                                            </a>
+
+                                            <a href="#" wire:click="descargarEstadoCuentaUSD"
+                                                class="btn btn-pink me-1 d-md-none btn-icon {{ $codigoCliente ? '' : 'disabled' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-download">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                                    <path d="M7 11l5 5l5 -5" />
+                                                    <path d="M12 4l0 12" />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
@@ -248,15 +289,16 @@
                                                     </div>
                                                 </div>
                                                 <div class="progressbg-value">
-                                                    {{ number_format($saldoAFavor['porcentaje'], 2) }}%</div>
+                                                    {{ number_format($saldoAFavor['porcentaje'], 2) }}%
+                                                </div>
                                             </div>
                                             @php $counter++; @endphp
 
                                         @empty
                                             <div class="empty-icon mx-auto">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round"
                                                     class="icon icon-tabler icons-tabler-outline icon-tabler-click">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                     <path d="M3 12l3 0" />
@@ -364,8 +406,8 @@
                                         <div class="empty">
                                             <div class="empty-icon">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round"
                                                     class="icon icon-tabler icons-tabler-outline icon-tabler-click">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                     <path d="M3 12l3 0" />
@@ -521,8 +563,32 @@
                 ordering: true, // Permite ordenamiento manual
                 "pageLength": 5,
                 columns: [{
-                        data: 'transaction_date',
-                        render: function(data, type, row) {
+                    data: 'transaction_date',
+                    render: function (data, type, row) {
+                        if (type === "sort" || type === "type") {
+                            const [day, month, year] = data.split("/");
+                            // Asegurar que día y mes tengan 2 dígitos
+                            const d = day.padStart(2, '0');
+                            const m = month.padStart(2, '0');
+                            return `${year}${m}${d}`; // Formato YYYYMMDD para ordenar
+                        }
+                        return data;
+                    }
+                },
+                {
+                    data: null,
+                    render: () => 'FACTURA',
+                },
+                {
+                    data: 'document_number'
+                },
+                {
+                    data: 'folio_sat'
+                },
+                {
+                    data: 'due_date',
+                    render(data, type, row) {
+                        if (data) {
                             if (type === "sort" || type === "type") {
                                 const [day, month, year] = data.split("/");
                                 // Asegurar que día y mes tengan 2 dígitos
@@ -532,110 +598,86 @@
                             }
                             return data;
                         }
-                    },
-                    {
-                        data: null,
-                        render: () => 'FACTURA',
-                    },
-                    {
-                        data: 'document_number'
-                    },
-                    {
-                        data: 'folio_sat'
-                    },
-                    {
-                        data: 'due_date',
-                        render(data, type, row) {
-                            if (data) {
-                                if (type === "sort" || type === "type") {
-                                    const [day, month, year] = data.split("/");
-                                    // Asegurar que día y mes tengan 2 dígitos
-                                    const d = day.padStart(2, '0');
-                                    const m = month.padStart(2, '0');
-                                    return `${year}${m}${d}`; // Formato YYYYMMDD para ordenar
-                                }
-                                return data;
-                            }
 
-                            return "SIN FECHA";
+                        return "SIN FECHA";
+                    }
+                },
+                {
+                    data: 'days_overdue',
+                    render: function (data, type, row) {
+                        if (data) {
+                            return data;
                         }
-                    },
-                    {
-                        data: 'days_overdue',
-                        render: function(data, type, row) {
-                            if (data) {
-                                return data;
-                            }
 
-                            return "-";
+                        return "-";
+                    }
+                },
+                {
+                    data: 'total_amount',
+                    render: function (data, type, row) {
+                        // Para visualización: formatear como moneda
+                        if (type === 'display') {
+                            return '$' + parseFloat(data).toLocaleString('es-MX', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
                         }
-                    },
-                    {
-                        data: 'total_amount',
-                        render: function(data, type, row) {
-                            // Para visualización: formatear como moneda
-                            if (type === 'display') {
-                                return '$' + parseFloat(data).toLocaleString('es-MX', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                });
-                            }
 
-                            // Para ordenamiento: mantener el valor numérico
-                            return parseFloat(data);
+                        // Para ordenamiento: mantener el valor numérico
+                        return parseFloat(data);
+                    }
+                },
+                {
+                    data: 'amount_unpaid',
+                    render: function (data, type, row) {
+                        // Para visualización
+                        if (type === 'display') {
+                            return '$' + parseFloat(data).toLocaleString('es-MX', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
                         }
-                    },
-                    {
-                        data: 'amount_unpaid',
-                        render: function(data, type, row) {
-                            // Para visualización
-                            if (type === 'display') {
-                                return '$' + parseFloat(data).toLocaleString('es-MX', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                });
-                            }
 
-                            // Para ordenamiento
-                            return parseFloat(data);
+                        // Para ordenamiento
+                        return parseFloat(data);
+                    }
+                },
+                {
+                    data: 'currency',
+                    render: (data) => `
+                                                                                                                                                            <span class="flag flag-xs flag-country-${data == 1 ? 'mx' : 'us'} me-2"></span>${data}`
+                },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return `<span span class= "badge bg-green-lt text-green-lt-fg" > ${data}</span > `;
+                    }
+                },
+                {
+                    data: 'memo',
+                    render: function (data, type, row) {
+                        if (data) {
+                            return data;
                         }
-                    },
-                    {
-                        data: 'currency_name',
-                        render: (data) => `
-                <span class="flag flag-xs flag-country-${data === 'MEX' ? 'mx' : 'us'} me-2"></span>${data}`
-                    },
-                    {
-                        data: 'status',
-                        render: function(data, type, row) {
-                            return `<span class="badge bg-green-lt text-green-lt-fg">${data}</span>`;
-                        }
-                    },
-                    {
-                        data: 'memo',
-                        render: function(data, type, row) {
-                            if (data) {
-                                return data;
-                            }
 
-                            return "-";
-                        }
-                    },
-                    {
-                        data: 'porcentaje_pagado',
-                        render: function(data, type, row) {
-                            // Usar parseFloat para asegurar formato numérico
-                            const porcentaje = parseFloat(data).toFixed(2);
+                        return "-";
+                    }
+                },
+                {
+                    data: 'porcentaje_pagado',
+                    render: function (data, type, row) {
+                        // Usar parseFloat para asegurar formato numérico
+                        const porcentaje = parseFloat(data).toFixed(2);
 
-                            return `
-                            <div class="d-flex flex-column">
-                                <div class="progress" style="height:8px;">
-                                    <div class="progress-bar bg-success" style="width:${porcentaje}%"></div>
-                                </div>
-                                <small class="text-success fw-bold mt-1">${porcentaje}% pagado</small>
-                            </div>`;
-                        }
-                    },
+                        return `
+                                                                                                                                                                        <div div class= "d-flex flex-column" >
+                                                                                                                                                                                                                                                                                            <div class="progress" style="height:8px;">
+                                                                                                                                                                                                                                                                                                <div class="progress-bar bg-success" style="width:${porcentaje}%"></div>
+                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                            <small class="text-success fw-bold mt-1">${porcentaje}% pagado</small>
+                                                                                                                                                                                                                                                                                        </div > `;
+                    }
+                },
 
 
                 ],
@@ -647,28 +689,28 @@
                         "sNext": "Sig.",
                         "sPrevious": "Ant."
                     },
-                    emptyTable: `<div class="empty">
-                                            <div class="empty-icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-click">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M3 12l3 0" />
-                                                    <path d="M12 3l0 3" />
-                                                    <path d="M7.8 7.8l-2.2 -2.2" />
-                                                    <path d="M16.2 7.8l2.2 -2.2" />
-                                                    <path d="M7.8 16.2l-2.2 2.2" />
-                                                    <path d="M12 12l9 3l-4 2l-2 4l-3 -9" />
-                                                </svg>
-                                                </svg>
-                                            </div>
-                                            <p class="empty-title">Sin resultados</p>
-                                            <p class="empty-subtitle text-secondary">
-                                                Selecciona un cliente para obtener su información.
-                                            </p>
-                                        </div>
-                    `
+                    emptyTable: `<div class= "empty">
+                                                                                                                                                                        <div class="empty-icon">
+                                                                                                                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                                                                                                                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                                                                                                                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                                                                                                                                                class="icon icon-tabler icons-tabler-outline icon-tabler-click">
+                                                                                                                                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                                                                                                                                                <path d="M3 12l3 0" />
+                                                                                                                                                                                <path d="M12 3l0 3" />
+                                                                                                                                                                                <path d="M7.8 7.8l-2.2 -2.2" />
+                                                                                                                                                                                <path d="M16.2 7.8l2.2 -2.2" />
+                                                                                                                                                                                <path d="M7.8 16.2l-2.2 2.2" />
+                                                                                                                                                                                <path d="M12 12l9 3l-4 2l-2 4l-3 -9" />
+                                                                                                                                                                            </svg>
+                                                                                                                                                                        </svg>
+                                                                                                                                                                                                                                                                                                        </div >
+                                                                                                                                                                                                                                                                                                        <p class="empty-title">Sin resultados</p>
+                                                                                                                                                                                                                                                                                                        <p class="empty-subtitle text-secondary">
+                                                                                                                                                                                                                                                                                                            Selecciona un cliente para obtener su información.
+                                                                                                                                                                                                                                                                                                        </p>
+                                                                                                                                                                                                                                                                                                    </div >
+                                                                                                                                                                            `
                 },
             });
 
@@ -688,7 +730,7 @@
             function formatDate(dmy) {
                 if (!dmy) return '';
                 const [d, m, y] = dmy.split('/');
-                return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`; // ISO ⇒ ordena bien
+                return `${y} - ${m.padStart(2, '0')} - ${d.padStart(2, '0')}`; // ISO ⇒ ordena bien
             }
         });
     </script>
@@ -702,78 +744,81 @@
                 ordering: true, // Permite ordenamiento manual
                 "pageLength": 5,
                 columns: [{
-                        data: 'transaction_date',
-                        render: function(data, type, row) {
-                            if (type === "sort" || type === "type") {
-                                const [day, month, year] = data.split("/");
-                                // Asegurar que día y mes tengan 2 dígitos
-                                const d = day.padStart(2, '0');
-                                const m = month.padStart(2, '0');
-                                return `${year}${m}${d}`; // Formato YYYYMMDD para ordenar
-                            }
-                            return data;
+                    data: 'transaction_date',
+                    render: function (data, type, row) {
+                        if (type === "sort" || type === "type") {
+                            const [day, month, year] = data.split("/");
+                            // Asegurar que día y mes tengan 2 dígitos
+                            const d = day.padStart(2, '0');
+                            const m = month.padStart(2, '0');
+                            return `${year}${m}${d}`; // Formato YYYYMMDD para ordenar
                         }
-                    },
-                    {
-                        data: 'document_number',
-                        render: function(data, type, row) {
-                            let typeTransation = data.substring(0, 3);
-                            if (typeTransation == "PAG") {
-                                return "PAGO";
-                            } else if (typeTransation == "NDC") {
-                                return "NOTA DE CRÉDITO";
-                            } else {
-                                return "POLIZA";
-                            }
+                        return data;
+                    }
+                },
+                {
+                    data: 'document_number',
+                    render: function (data, type, row) {
+                        let typeTransation = data.substring(0, 3);
+                        if (typeTransation == "PAG") {
+                            return "PAGO";
+                        } else if (typeTransation == "NDC") {
+                            return "NOTA DE CRÉDITO";
+                        } else {
+                            return "POLIZA";
                         }
-                    },
-                    {
-                        data: 'document_number'
-                    },
-                    {
-                        data: 'folio_sat'
-                    },
-                    {
-                        data: 'total_amount',
-                        render: function(data, type, row) {
-                            // Para visualización: formatear como moneda
-                            if (type === 'display') {
-                                return '$' + parseFloat(data).toLocaleString('es-MX', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                });
-                            }
+                    }
+                },
+                {
+                    data: 'document_number'
+                },
+                {
+                    data: 'folio_sat'
+                },
+                {
+                    data: 'total_amount',
+                    render: function (data, type, row) {
+                        // Para visualización: formatear como moneda
+                        if (type === 'display') {
+                            return '$' + parseFloat(data).toLocaleString('es-MX', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                        }
 
-                            // Para ordenamiento: mantener el valor numérico
-                            return parseFloat(data);
+                        // Para ordenamiento: mantener el valor numérico
+                        return parseFloat(data);
+                    }
+                },
+                {
+                    data: 'payment_amount_unused',
+                    render: function (data, type, row) {
+                        // Para visualización
+                        if (type === 'display') {
+                            return '$' + parseFloat(data).toLocaleString('es-MX', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
                         }
-                    },
-                    {
-                        data: 'payment_amount_unused',
-                        render: function(data, type, row) {
-                            // Para visualización
-                            if (type === 'display') {
-                                return '$' + parseFloat(data).toLocaleString('es-MX', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                });
-                            }
 
-                            // Para ordenamiento
-                            return parseFloat(data);
-                        }
-                    },
-                    {
-                        data: 'currency_name',
-                        render: (data) => `
-                <span class="flag flag-xs flag-country-${data === 'MEX' ? 'mx' : 'us'} me-2"></span>${data}`
-                    },
-                    {
-                        data: 'status',
-                        render: function(data, type, row) {
-                            return `<span class="badge bg-green-lt text-green-lt-fg">${data}</span>`;
-                        }
-                    },
+                        // Para ordenamiento
+                        return parseFloat(data);
+                    }
+                },
+                {
+                    data: 'currency',
+                    render: (data) => `
+                                <span class="flag flag-xs flag-country-${data == 1 ? 'mx' : 'us'} me-2"></span>
+                                ${data == 1 ? 'MXN' : 'USD'}`
+                },
+
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return `<span class="badge bg-green-lt text-green-lt-fg">${data}</span>`;
+
+                    }
+                },
                 ],
                 language: {
                     url: "https://cdn.datatables.net/plug-ins/1.13.5/i18n/es-MX.json",
@@ -783,28 +828,28 @@
                         "sNext": "Sig.",
                         "sPrevious": "Ant."
                     },
-                    emptyTable: `<div class="empty">
-                                            <div class="empty-icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-click">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M3 12l3 0" />
-                                                    <path d="M12 3l0 3" />
-                                                    <path d="M7.8 7.8l-2.2 -2.2" />
-                                                    <path d="M16.2 7.8l2.2 -2.2" />
-                                                    <path d="M7.8 16.2l-2.2 2.2" />
-                                                    <path d="M12 12l9 3l-4 2l-2 4l-3 -9" />
-                                                </svg>
-                                                </svg>
-                                            </div>
-                                            <p class="empty-title">Sin resultados</p>
-                                            <p class="empty-subtitle text-secondary">
-                                                Selecciona un cliente para obtener su información.
-                                            </p>
-                                        </div>
-                    `
+                    emptyTable: `<div class= "empty">
+                                                            <div class="empty-icon">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-click">
+                                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                                    <path d="M3 12l3 0" />
+                                                                    <path d="M12 3l0 3" />
+                                                                    <path d="M7.8 7.8l-2.2 -2.2" />
+                                                                    <path d="M16.2 7.8l2.2 -2.2" />
+                                                                    <path d="M7.8 16.2l-2.2 2.2" />
+                                                                    <path d="M12 12l9 3l-4 2l-2 4l-3 -9" />
+                                                                </svg>
+                                                            </svg>
+                                                                                                                                                                                                                                                                                                        </div >
+                                                                                                                                                                                                                                                                                                        <p class="empty-title">Sin resultados</p>
+                                                                                                                                                                                                                                                                                                        <p class="empty-subtitle text-secondary">
+                                                                                                                                                                                                                                                                                                            Selecciona un cliente para obtener su información.
+                                                                                                                                                                                                                                                                                                        </p>
+                                                                                                                                                                                                                                                                                                    </div >
+                                                            `
                 },
             });
 
@@ -824,7 +869,7 @@
             function formatDate(dmy) {
                 if (!dmy) return '';
                 const [d, m, y] = dmy.split('/');
-                return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`; // ISO ⇒ ordena bien
+                return `${y} - ${m.padStart(2, '0')} - ${d.padStart(2, '0')}`; // ISO ⇒ ordena bien
             }
         });
     </script>
